@@ -1,0 +1,58 @@
+.bg-body-tertiary{
+    background-color: #315a70!important;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    font-family:'Gabarito';
+}
+
+.navbar-nav .nav-link{
+    color:white;
+    font-size: 20px;
+
+}
+.navbar-collapse{
+    padding-right: 40px;
+}
+
+.navbar-nav .nav-link.active, .navbar-nav .nav-link.show{
+    color:antiquewhite;
+    font-size: 20px;
+}
+.mainSection{
+   padding:20px;
+   flex:1;
+}
+
+.app-description{
+    text-align: center;
+    padding-top: 6%;
+}
+.mainSection .app-description>h1{
+   font-weight:700;
+}
+
+#aboutSmall{
+    padding:4% 5%;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+#start_btn{
+    background-color:#ff5757;
+    border-color: #ff5757;
+    font-weight: 700;
+}
+
+#start_btn>a{
+    text-decoration: none;
+    color: black;
+}
+
+footer{
+    color:whitesmoke;
+}

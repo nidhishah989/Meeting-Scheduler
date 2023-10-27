@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<!--NIDHI SHAH-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Setup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;700&display=swap" rel="stylesheet">
+    <!-- <link rel="stylesheet" type="text/css" href="main.css"> -->
+    <link rel="stylesheet" type="text/css" href="/css/orgadmin_setup.css">
+
+    <style>
+        #sign_up_btn {
+          background-color: #315a70;
+          border-color: #315a70;
+          font-weight: 700;
+        }
+
+        #sign_up_btn>a {
+          text-decoration: none;
+          color: white;
+        }
+
+        div>button:first-child {
+          text-align: center;
+          display: block;
+          margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid shadow-lg adminSignup">
+    <div class="row" id="main-row">
+        <!--The left side form -->
+        <div class="col-12 col-md-10 nav-section">
+            <div>
+                <!-- navbar -->
+                <nav class="navbar bg-body-tertiary navbar-expand-lg">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" th:href="@{/}">
+                            <!-- <img src="Meetsy_logo.png" alt="M" width="60" class="d-inline-block">
+                                         <span class ="d-inline-block" id="logo_name">eetsy</span> -->
+                            <div class="d-flex align-items-center">
+                                <img src="/assests/Meetsy_logo.png" alt="M" width="65">
+                                <span id="logo_name"><b>eetsy</b></span>
+                            </div>
+                        </a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                                aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                            <div class="navbar-nav">
+                                <span class="d-none d-md-block py-2">Already have organization Setup? </span>
+                                <a class="nav-link active" aria-current="page" href="#">Sign In</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </nav>
+            </div>
+            <div class="admin-form">
+                <div>
+                    <h1 class="display-7" style="text-align: center; padding-top:8px; padding-bottom: 10px;"> Let’s setup an
+                        admin account to manage new organization..</h1>
+                </div>
+                <form class="row mx-md-5 px-5 g-3" th:action="@{/process-orgsetup}" th:object="${teammember}" method="post">
+                    <div class="px-md-5 col-md-8 col-sm-12">
+                        <label for="organizationName" class="form-label">Organization Name</label>
+                        <input type="text" class="form-control" th:field="*{organization.orgName}" id="organizationName"
+                               placeholder="Your Organization Name" required="">
+                    </div>
+                    <div class="px-md-5 col-md-6 col-sm-12 adminFname">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" name="firstName" th:field="*{firstName}" id="firstName" placeholder="Admin Last Name"
+                               required="">
+                    </div>
+                    <div class="px-md-5 col-md-6 col-sm-12 adminLname">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" name="lastName" th:field="*{lastName}" id="lastName" placeholder="Admin First Name"
+                               required="">
+                    </div>
+                    <div class="px-md-5 col-md-8 col-sm-12">
+                        <label for="adminEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="adminEmail" name="adminEmail" th:field="*{email}"
+                               placeholder="Admin Email address: username@domain.com" required="">
+                        <span id="emailValidationMessage" style="color: red;"></span>
+                    </div>
+                    <div class="px-md-5 col-md-6 col-sm-12 adminpassword1">
+                        <label for="password1" class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" id="password1" required="">
+                    </div>
+                    <div class="px-md-5 col-md-6 col-sm-12 adminpassword2">
+                        <label for="password2" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" name="password2" id="password2" required="">
+                    </div>
+                    <span class="mx-md-5 mt-1">Use 8-12 characters with mix of letters, numbers & special symbol.</span>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-lg mb-3" id="sign_up_btn">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="d-none d-md-block col-2" style="padding-right: 0;">
+            <img src="/assests/sidebar2.png" alt="" class="img-fluid" />
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+<script src="/js/orgadmin.js"></script>
+</body>
+
+</html>
