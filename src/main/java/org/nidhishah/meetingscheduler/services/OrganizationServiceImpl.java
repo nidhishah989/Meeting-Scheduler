@@ -8,6 +8,9 @@ import org.nidhishah.meetingscheduler.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @Service
 public class OrganizationServiceImpl implements OrganizationService{
 
@@ -21,20 +24,22 @@ public class OrganizationServiceImpl implements OrganizationService{
     }
 
     @Override
-    public Organization setOrganization(String organization) {
-        System.out.println("organization Setup for : " + organization);
+    public Organization setOrganization(OrganizationDTO organizationDTO) {
+        System.out.println("organization Setup for : " + organizationDTO.getOrgName());
 
-        if (organizationRepository.findByOrgName(organization) != null) {
+        if (organizationRepository.findByOrgName(organizationDTO.getOrgName()) != null) {
             return null; // Organization already exists // no setup is done, so it return null
         }
         else{
             // Map DTO to Entity
-            Organization newOrg = new Organization();
-            newOrg.setOrgName(organization);
-            newOrg.setBaseUrl("/"+organization.toLowerCase());
+            organizationDTO.setBaseUrl("/"+organizationDTO.getOrgName());
+            Organization newOrg = modelMapper.map(organizationDTO,Organization.class);
+
+//            newOrg.setBaseUrl("/"+organizationDTO.get.toLowerCase());
             // Save the organization
             organizationRepository.save(newOrg);
-            return organizationRepository.findByOrgName(newOrg.getOrgName());
+            return newOrg;
+//            return organizationRepository.findByOrgName(newOrg.getOrgName());
 //            return newOrg; // Organization setup successful
         }
 
@@ -42,9 +47,15 @@ public class OrganizationServiceImpl implements OrganizationService{
 
     @Override
     public OrganizationDTO findByOrgName(String organization) {
-        Organization org = organizationRepository.findByOrgName(organization);
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        OrganizationDTO organizationDTO = modelMapper.map(org,OrganizationDTO.class);
-        return  organizationDTO;
+        Optional<Organization> orgOptional = organizationRepository.findByOrgName(organization);
+        if(orgOptional.isPresent()){
+            Organization org = orgOptional.get();
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+            OrganizationDTO organizationDTO = modelMapper.map(org,OrganizationDTO.class);
+            return  organizationDTO;
+        }
+        else{
+            return null;
+        }
     }
 }
