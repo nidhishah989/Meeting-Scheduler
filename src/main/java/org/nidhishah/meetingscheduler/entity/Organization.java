@@ -29,6 +29,23 @@ public class Organization {
     @Column(name = "meeting_window")
     private String meetingWindow;
 
+    @Column(name="address_1")
+    private String orgAddress1;
+
+    @Column(name="address_2")
+    private String orgAddress2;
+
+    @Column(name="org_city")
+    private String orgCity;
+    @Column(name="org_state")
+    private String orgState;
+
+    @Column(name="org_country")
+    private String orgCountry;
+
+    @Column(name="org_contact")
+    private String orgContact;
+
     // Constructors, getters, setters, and other fields as needed
 
     public Organization() {
@@ -78,6 +95,52 @@ public class Organization {
         this.meetingWindow = meetingWindow;
     }
 
+    public String getOrgAddress1() {
+        return orgAddress1;
+    }
 
+    public void setOrgAddress1(String orgAddress1) {
+        this.orgAddress1 = orgAddress1;
+    }
+
+    public String getOrgAddress2() {
+        return orgAddress2;
+    }
+
+    public void setOrgAddress2(String orgAddress2) {
+        this.orgAddress2 = orgAddress2;
+    }
+
+    public String getOrgCity() {
+        return orgCity;
+    }
+
+    public void setOrgCity(String orgCity) {
+        this.orgCity = orgCity;
+    }
+
+    public String getOrgState() {
+        return orgState;
+    }
+
+    public void setOrgState(String orgState) {
+        this.orgState = orgState;
+    }
+
+    public String getOrgCountry() {
+        return orgCountry;
+    }
+
+    public void setOrgCountry(String orgCountry) {
+        this.orgCountry = orgCountry;
+    }
+
+    public String getOrgContact() {
+        return orgContact;
+    }
+
+    public void setOrgContact(String orgContact) {
+        this.orgContact = orgContact;
+    }
 }
 

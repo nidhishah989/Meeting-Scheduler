@@ -19,6 +19,12 @@ public class OrganizationDTO {
     private String baseUrl;
     private String meetingType;
     private String meetingWindow;
+    private String orgAddress1;
+    private String orgAddress2;
+    private String orgCity;
+    private String orgState;
+    private String orgCountry;
+    private String orgContact;
 
     // Constructors, getters, setters, and other fields as needed
 

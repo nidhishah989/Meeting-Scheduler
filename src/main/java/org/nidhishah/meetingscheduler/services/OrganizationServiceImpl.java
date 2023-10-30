@@ -24,29 +24,35 @@ public class OrganizationServiceImpl implements OrganizationService{
     }
 
     @Override
-    public Organization setOrganization(OrganizationDTO organizationDTO) {
-        System.out.println("organization Setup for : " + organizationDTO.getOrgName());
+    public boolean setOrganizationDetail(OrganizationDTO organizationDTO) {
+        String organizationname= organizationDTO.getOrgName();
+        System.out.println("organization Setup for : " + organizationname);
+        //if org is there, update it and return true otherwise return false
+        Optional<Organization> orgOptional = organizationRepository.findByOrgName(organizationname);
+        if(orgOptional.isPresent()){
+            //update organization, return true
+            Organization oldorg = orgOptional.get();
+            oldorg.setOrgDescription(organizationDTO.getOrgDescription());
+            oldorg.setOrgAddress1(organizationDTO.getOrgAddress1());
+            oldorg.setOrgAddress2(organizationDTO.getOrgAddress2());
+            oldorg.setOrgCity(organizationDTO.getOrgCity());
+            oldorg.setOrgState(organizationDTO.getOrgState());
+            oldorg.setOrgCountry(organizationDTO.getOrgCountry());
+            oldorg.setOrgContact(organizationDTO.getOrgContact());
 
-        if (organizationRepository.findByOrgName(organizationDTO.getOrgName()) != null) {
-            return null; // Organization already exists // no setup is done, so it return null
+            organizationRepository.save(oldorg);
+            return true;
         }
         else{
-            // Map DTO to Entity
-            organizationDTO.setBaseUrl("/"+organizationDTO.getOrgName());
-            Organization newOrg = modelMapper.map(organizationDTO,Organization.class);
-
-//            newOrg.setBaseUrl("/"+organizationDTO.get.toLowerCase());
-            // Save the organization
-            organizationRepository.save(newOrg);
-            return newOrg;
-//            return organizationRepository.findByOrgName(newOrg.getOrgName());
-//            return newOrg; // Organization setup successful
+            return false;
         }
 
     }
 
+
     @Override
     public OrganizationDTO findByOrgName(String organization) {
+        organization = organization.toLowerCase();
         Optional<Organization> orgOptional = organizationRepository.findByOrgName(organization);
         if(orgOptional.isPresent()){
             Organization org = orgOptional.get();

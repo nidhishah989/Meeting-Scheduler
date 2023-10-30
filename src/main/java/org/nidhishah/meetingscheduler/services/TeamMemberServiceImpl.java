@@ -46,6 +46,7 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             System.out.println("ORGDTO: "+organizationDTO.getOrgName());
             organizationDTO.setBaseUrl("/"+organizationDTO.getOrgName());
             System.out.println("ORGDTO" +organizationDTO.getBaseUrl());
+            organizationDTO.setOrgName(organizationDTO.getOrgName().toLowerCase());
             //get organization
             Organization organization = modelMapper.map(organizationDTO,Organization.class);
             System.out.println("ORG: "+organization.getOrgName());

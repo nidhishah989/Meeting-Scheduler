@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface OrganizationService {
 
 
-    public Organization setOrganization(OrganizationDTO organizationDTO);
+    public boolean setOrganizationDetail(OrganizationDTO organizationDTO);
 
     public OrganizationDTO findByOrgName(String organization);
 }

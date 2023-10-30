@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<!--NIDHI SHAH-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Setup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/css/orgadmin_setup.css">
+    <style>
+        #organization_save_btn {
+            background-color: #315a70;
+            border-color: #315a70;
+            font-weight: 700;
+            margin-top: 34px;
+        }
+
+        #organization_save_btn>a {
+            text-decoration: none;
+            color: white;
+        }
+
+        div>button:first-child {
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid shadow-lg adminSignup">
+    <div class="row" id="main-row">
+        <!--The left side form -->
+        <div class="col-12 col-md-10 nav-section">
+            <div>
+                <!-- navbar -->
+                <nav class="navbar bg-body-tertiary navbar-expand-lg">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" th:href="@{/}">
+                            <div class="d-flex align-items-center">
+                                <img src="/assests/Meetsy_logo.png" alt="M" width="65">
+                                <span id="logo_name"><b>eetsy</b></span>
+                            </div>
+                        </a>
+
+                    </div>
+                </nav>
+            </div>
+            <div class="admin-form">
+                <div th:if="${errorMessage}" class="alert alert-danger">
+                    <p th:text="${errorMessage}"></p>
+                </div>
+                <div>
+                    <h1 class="display-7" style="text-align: center; padding-top:8px; padding-bottom: 10px;"> Let's
+                        add more details about organization..</h1>
+                </div>
+
+                <form class="row mx-md-5 px-5 g-3" th:action="@{/process-orgdetailsetup}" th:object="${organization}" method="post">
+                    <div class="px-md-5 col-md-8 col-sm-12">
+                        <label for="orgname" class="form-label">Organization Name</label>
+                        <input type="text" class="form-control" name="orgname" id="orgname" th:field="*{orgName}" th:placeholder="*{orgName}" readonly>
+                    </div>
+                    <div class="px-md-5 col-md-8 col-sm-12">
+                        <label for="organizationdetail" class="form-label">Organization Detail</label>
+                        <input type="text" class="form-control user-input" name="orgdescription"
+                               id="organizationdetail" th:field="*{orgDescription}" placeholder="What is organization about..." required="">
+                    </div>
+                    <div class="px-md-5 col-md-4 col-sm-12 adminFname">
+                        <label for="phoneNumber" class="form-label">Phone Number:</label>
+                        <input type="tel" class="form-control user-input" id="phoneNumber" name="phoneNumber" th:field="*{orgContact}"
+                               placeholder="Contact Phone Number" maxlength="10" required>
+                    </div>
+
+                    <div class="px-md-5 col-md-6 col-sm-12">
+                        <label for="address1" class="form-label">Address Line 1</label>
+                        <input type="text" class="form-control user-input" id="address1" name="address1" th:field="*{orgAddress1}" value="">
+                    </div>
+                    <div class="px-md-5 col-md-6 col-sm-12">
+                        <label for="address2" class="form-label">Address Line 2</label>
+                        <input type="text" class="form-control user-input" id="address2" name="address2" th:field="*{orgAddress2}" value="">
+                    </div>
+                    <div class="px-md-5 col-md-4 col-sm-12">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control user-input" id="city" name="city" th:field="*{orgCity}" required=""
+                               value="">
+                        <span id="cityvaluemessage" style="color: red;"></span>
+                    </div>
+                    <div class="px-md-5 col-md-4 col-sm-12">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" class="form-control user-input" id="state" name="state"  th:field="*{orgState}" required=""
+                               value="">
+                        <span id="statevaluemessage" style="color: red;"></span>
+
+                    </div>
+                    <div class="px-md-5 col-md-4 col-sm-12">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control user-input" id="country" name="country" th:field="*{orgCountry}" required=""
+                               value="">
+                        <span id="countryvaluemessage" style="color: red;"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-lg mb-3"
+                                id="organization_save_btn">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="d-none d-sm-block col-2" style="padding-right: 0;">
+            <img src="/assests/sidebar2.png" alt="" class="img-fluid" />
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+<script src="/js/orgadmin.js"></script>
+</body>
+
+</html>
