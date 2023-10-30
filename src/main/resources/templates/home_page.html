@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/home.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}">
 </head>
 
 <body>
@@ -53,11 +53,13 @@
                 </p>
             </div>
             <button type="button" class="btn btn-primary btn-lg" id="start_btn">
-                <a th:href="@{/orgsetup/}">Let's Setup</a>
+                <a th:href="@{/orgsetup}">Let's Setup</a>
             </button>
         </div>
         <div class="col-md-6 col-xs-12">
             <img src="/assests/calender_back.jpg" alt="" width="100%" />
+<!--            <img th:src="@{/assets/calender_back.jpg}" alt="" width="100%" />-->
+
         </div>
     </div>
 </div>

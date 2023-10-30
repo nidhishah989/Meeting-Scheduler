@@ -74,7 +74,7 @@
                     <h1 class="display-7" style="text-align: center; padding-top:8px; padding-bottom: 10px;"> Let’s setup an
                         admin account to manage new organization..</h1>
                 </div>
-                <form class="row mx-md-5 px-5 g-3" th:action="@{/process-orgsetup}" th:object="${teammember}" method="post">
+                <form class="row mx-md-5 px-5 g-3" th:action="@{/orgsetupprocess}" th:object="${teammember}" method="post">
                     <div class="px-md-5 col-md-8 col-sm-12" th:object="${organization}">
                         <label for="organizationName" class="form-label">Organization Name</label>
                         <input type="text" class="form-control" th:field="*{orgName}" id="organizationName"

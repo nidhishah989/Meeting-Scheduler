@@ -27,7 +27,7 @@ public class OrganizationController {
         this.organizationService = organizationService;
     }
 
-    @GetMapping("/orgsetup/")
+    @GetMapping("/orgsetup")
     public String showOrgSetupForm(Model model){
         model.addAttribute("teammember",new TeamMemberDTO());
         model.addAttribute("organization", new OrganizationDTO());
@@ -36,7 +36,7 @@ public class OrganizationController {
 
     }
 
-    @PostMapping("/process-orgsetup")
+    @PostMapping("/orgsetupprocess")
     public String processOrgSetup(@ModelAttribute ("teammember") TeamMemberDTO teamMemberDTO,
                                   BindingResult bindingResult,
                                   @ModelAttribute ("organization") OrganizationDTO organizationDTO,
