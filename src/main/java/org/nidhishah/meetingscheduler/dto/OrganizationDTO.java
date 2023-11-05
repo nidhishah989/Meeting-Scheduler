@@ -17,8 +17,8 @@ public class OrganizationDTO {
     private String orgName;
     private String orgDescription;
     private String baseUrl;
-    private String meetingType;
-    private String meetingWindow;
+//    private String meetingType;
+//    private String meetingWindow;
     private String orgAddress1;
     private String orgAddress2;
     private String orgCity;

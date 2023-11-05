@@ -1,6 +1,5 @@
 package org.nidhishah.meetingscheduler.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,18 +11,18 @@ public class Role {
     @Column(name="role_name")
     private String roleName;
 
-    // Constructors, getters, setters, and other fields as needed
-
+    public Role() {
+    }
 
     public Long getId() {
         return id;
     }
 
-    public String getName() {
+    public String getRoleName() {
         return roleName;
     }
 
-    public void setName(String name) {
-        this.roleName = name;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }

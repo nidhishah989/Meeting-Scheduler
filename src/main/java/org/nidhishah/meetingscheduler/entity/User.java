@@ -1,11 +1,10 @@
 package org.nidhishah.meetingscheduler.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "team_members")
-public class TeamMember {
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,7 +31,16 @@ public class TeamMember {
     @JoinColumn(name = "org_name")
     private Organization organization;
 
-    // Constructors, getters, setters, and other fields as needed
+    public User() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -98,4 +106,3 @@ public class TeamMember {
         this.organization = organization;
     }
 }
-

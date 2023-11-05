@@ -41,7 +41,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         (auth) -> auth
                         .requestMatchers("/", "/orgsetup","/orgsetupprocess","/login","/css/**","/js/**","assests/**").permitAll() //this will allow any user to access these two pages
-                                .anyRequest().authenticated() //this will make sure to authenticate user for other pages
+                                .requestMatchers("/setorgdetail/**","/process-orgdetailsetup","/adm_dashboard").hasAuthority("admin")
+                        .anyRequest().authenticated() //this will make sure to authenticate user for other pages
 
                 )
 

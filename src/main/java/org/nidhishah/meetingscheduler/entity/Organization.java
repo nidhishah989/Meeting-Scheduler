@@ -1,13 +1,9 @@
 package org.nidhishah.meetingscheduler.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
-
 @Entity
-@Table(name = "organizations")
 public class Organization {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +19,11 @@ public class Organization {
     @Column(name = "base_url")
     private String baseUrl;
 
-    @Column(name = "meeting_type")
-    private String meetingType;
-
-    @Column(name = "meeting_window")
-    private String meetingWindow;
+//    @Column(name = "meeting_type")
+//    private String meetingType;
+//
+//    @Column(name = "meeting_window")
+//    private String meetingWindow;
 
     @Column(name="address_1")
     private String orgAddress1;
@@ -46,13 +42,15 @@ public class Organization {
     @Column(name="org_contact")
     private String orgContact;
 
-    // Constructors, getters, setters, and other fields as needed
-
     public Organization() {
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getOrgName() {
@@ -77,22 +75,6 @@ public class Organization {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
-    }
-
-    public String getMeetingType() {
-        return meetingType;
-    }
-
-    public void setMeetingType(String meetingType) {
-        this.meetingType = meetingType;
-    }
-
-    public String getMeetingWindow() {
-        return meetingWindow;
-    }
-
-    public void setMeetingWindow(String meetingWindow) {
-        this.meetingWindow = meetingWindow;
     }
 
     public String getOrgAddress1() {

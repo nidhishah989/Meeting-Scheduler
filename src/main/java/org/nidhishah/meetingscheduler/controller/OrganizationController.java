@@ -2,9 +2,13 @@ package org.nidhishah.meetingscheduler.controller;
 
 import org.nidhishah.meetingscheduler.dto.OrganizationDTO;
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
+import org.nidhishah.meetingscheduler.dto.UserDTO;
+import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.OrganizationService;
 import org.nidhishah.meetingscheduler.services.TeamMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,7 +33,7 @@ public class OrganizationController {
 
     @GetMapping("/orgsetup")
     public String showOrgSetupForm(Model model){
-        model.addAttribute("teammember",new TeamMemberDTO());
+        model.addAttribute("teammember",new UserDTO());
         model.addAttribute("organization", new OrganizationDTO());
 
         return "orgadmin_setup_page";
@@ -37,14 +41,14 @@ public class OrganizationController {
     }
 
     @PostMapping("/orgsetupprocess")
-    public String processOrgSetup(@ModelAttribute ("teammember") TeamMemberDTO teamMemberDTO,
+    public String processOrgSetup(@ModelAttribute ("teammember") UserDTO userDTO,
                                   BindingResult bindingResult,
                                   @ModelAttribute ("organization") OrganizationDTO organizationDTO,
                                   BindingResult bindingResultOrganization, Model model)
     {
         try{
-            teamMemberService.registerAdmin(teamMemberDTO, organizationDTO);
-            return "redirect:/" + organizationDTO.getOrgName() + "/setorgdetail";
+            teamMemberService.registerAdmin(userDTO, organizationDTO);
+            return "redirect:/" + "setorgdetail/"+ organizationDTO.getOrgName() ;
         }catch (Exception e){
             String errormessage = "Organization setup failed. The provided organization name is already in use.";
             System.out.println(errormessage);
@@ -54,20 +58,35 @@ public class OrganizationController {
 
     }
 
-    @GetMapping("/{organizationName}/setorgdetail")
+    @GetMapping("/setorgdetail/{organizationName}")
     public String updateOrgWithExtraDetails(@PathVariable(name="organizationName") String organizationName,
                                             Model model)
     {
-        //get organization: if is null //404 error
-        OrganizationDTO organizationDTO = organizationService.findByOrgName(organizationName);
-        if(organizationDTO != null){
-            model.addAttribute("organization",organizationDTO);
-            return "organization_detail_setup";
+        System.out.println("Inside the setorgdetail controller");
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                if (userPrincipal.getOrganizationName().equals(organizationName)) {
+                    // Access the organization name from the UserPrincipal
+                    System.out.println("Authenticated User organization" + userPrincipal.getOrganizationName());
+                    System.out.println(userPrincipal.getAuthorities());
+                    //get organization: if is null //404 error
+                    OrganizationDTO organizationDTO = organizationService.findByOrgName(organizationName);
+                    if (organizationDTO != null) {
+                        model.addAttribute("organization", organizationDTO);
+                        return "organization_detail_setup";
+                    } else {
+                        throw new Exception("No organization found.");
+                    }
+                }
+            }
         }
-        else{
+        catch (Exception e){
             System.out.println("Error: 404");
-            return "error/404";
+            return "Error/404";
         }
+        return "Error/404";
     }
 
     @PostMapping("/process-orgdetailsetup")
@@ -75,20 +94,30 @@ public class OrganizationController {
                                            BindingResult bindingResult, Model model)
     {
         try{
-            System.out.println("In Controller: "+organizationDTO.getOrgName());
-            if(organizationService.setOrganizationDetail(organizationDTO)){
-                // update is done - give admin a new page for setting availability
-                return "file";
+            //access the authenticated user information
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+            if (authentication != null && authentication.isAuthenticated()) {
+                System.out.println(authentication.getPrincipal());
+                System.out.println(authentication.getDetails());
+
+                System.out.println("In Controller: "+organizationDTO.getOrgName());
+                if(organizationService.setOrganizationDetail(organizationDTO)){
+                    // update is done - give admin a new page for setting availability
+                    return "redirect:/adm_dashboard";
+
+                }
+                else{
+                    //update not done - throw error
+                    model.addAttribute("errorMessage"," Something went wrong. Please try again later.");
+                    return "organization_detail_setup";
+                }
             }
-            else{
-                //update not done - throw error
-                model.addAttribute("errorMessage"," Something went wrong. Please try again later.");
-                return "organization_detail_setup";
-            }
+
         }catch (Exception e){
-
+            System.out.println("Error: 404");
+            return "Error/404";
         }
-        return "file";
+        return "Error/404";
     }
 }
