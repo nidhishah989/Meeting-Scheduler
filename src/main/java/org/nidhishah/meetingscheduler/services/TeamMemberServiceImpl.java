@@ -168,7 +168,5 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             e.printStackTrace();
             throw new Exception("Organization not found. Exception");
         }
-
-
     }
 }

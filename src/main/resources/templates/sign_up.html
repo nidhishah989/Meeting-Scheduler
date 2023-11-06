@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sign Up</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
         }
 
         button > a{
-            color: black;
+            color:black;
         }
 
         @media (min-width: 768px) {
@@ -54,57 +54,71 @@
 </head>
 <body>
 <section class="h-100 gradient-form" style="background-color: #eee;">
-    <div class="container py-5 h-100">
+    <div class="container py-2 h-100">
         <div class="row justify-content-center align-items-center h-100">
-            <div class="col-xl-8">
+            <div class="col-xl-10">
                 <div class="card shadow-lg rounded text-black">
                     <div class="row g-0">
                         <!--Side Message-->
                         <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
                             <div class="text-white px-3 py-4 p-md-3 mx-md-2 text-center">
-                                <h1 class="mb-4">Welcome back to Meetsy!</h1>
-                                <p class="large">"Unlock your meeting management potential!"</p>
+                                <h1 class="mb-4">Welcome to Meetsy! </h1>
+                                <p class="large">"Unlock your meeting management potential by completing sign up process!"</p>
                             </div>
                         </div>
                         <!---->
-                        <div class="col-lg-6">
+                        <div class="col-lg-6" th:object="${signupuser}">
                             <div class="card-body p-md-2 mx-md-4">
 
-                                <div class="text-center mt-4 mb-4">
+                                <div class="text-center mt-3 mb-3">
                                     <img src="/assests/Meetsy.png" height="45px">
 
                                     <!-- <h4 class="mt-1 mb-5 pb-1">We are The Lotus Team</h4> -->
                                 </div>
 
-                                <form class="align-items-center" action="#" th:action="@{/login}" method="post">
-                                    <h4 class="text-center">Please login to your account</h4>
+                                <form class="align-items-center" action="#" th:action="@{/signup}" method="post">
+                                    <h4 class="text-center">Sign Up</h4>
 
-                                    <div class="p-4">
-                                        <div class="form-outline mb-4">
-                                            <label class="form-label font-weight-bold" for="username">Username</label>
-                                            <input type="text" id="username" name="username" class="form-control"
-                                                   placeholder="username" required/>
+                                    <div class="p-2">
+                                        <div class="form-outline mb-3 col-12">
+                                            <label class="form-label font-weight-bold" for="email">Email</label>
+                                            <input type="email" id="email" name="email" th:field="*{email}" class="form-control"
+                                                   placeholder="Enter your Email address." required/>
                                         </div>
 
-                                        <div class="form-outline mb-4">
+                                        <div class="form-outline mb-3 col-12">
+                                            <label class="form-label" for="passcode">Temporary Passcode</label>
+                                            <input type="text" id="passcode" name="passcode" th:field="*{tempPasccode}" class="form-control"
+                                                   placeholder="Enter provided temporary passcode." required/>
+                                        </div>
+                                        <div class="row mb-3">
+                                        <div class="form-outline mb-sm-3 mb-md-0 col-md-6">
                                             <label class="form-label" for="password">Password</label>
-                                            <input type="password" id="password" name="password" class="form-control" required />
+                                            <input type="password" id="password" name="password" th:field="*{password}" class="form-control" required />
                                         </div>
-
-                                        <div class="form-outline mb-3">
+                                        <div class="form-outline col-md-6">
+                                            <label class="form-label" for="password">Confirm Password</label>
+                                            <input type="password" id="password1" name="password" class="form-control" required />
+                                        </div>
+                                        </div>
+                                        <div class="form-outline mb-3 col-12">
                                             <label class="form-label" for="organization">Organization Name</label>
-                                            <input type="text" id="organization" name="organization" class="form-control"
+                                            <input type="text" id="organization" name="organization" th:field="*{organization}" class="form-control"
                                                    placeholder="organization Name" required/>
                                         </div>
                                     </div>
                                     <div class="text-center mb-3 pb-1">
                                         <button class="btn btn-primary fa-lg gradient-custom-2 mb-3 px-5"
-                                                type="submit">Login</button>
+                                                type="submit">Sign Up</button>
                                     </div>
 
                                     <div class="d-flex align-items-center justify-content-center pb-4">
-                                        <p class="mb-0 me-2">Don't have an account?</p>
-                                        <button type="button" class="btn btn-outline-danger"><a class="text-decoration-none" th:href="@{/signup}">Create new</a></button>
+                                        <p class="mb-0 me-2">Already have account?</p>
+                                        <button type="button" class="btn btn-outline-danger"><a class="text-decoration-none" th:href="@{/login}"> Login </a></button>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-center pb-4">
+                                        <p class="mb-0 me-2">New Organization Setup?</p>
+                                        <button type="button" class="btn btn-outline-info"><a class="text-decoration-none" th:href="@{/orgsetup}">Organization Setup</a></button>
                                     </div>
 
                                 </form>

@@ -40,8 +40,8 @@ public class SecurityConfiguration {
         http    .addFilterBefore(new OrganizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         (auth) -> auth
-                        .requestMatchers("/", "/orgsetup","/orgsetupprocess","/login","/css/**","/js/**","assests/**").permitAll() //this will allow any user to access these two pages
-                                .requestMatchers("/setorgdetail/**","/process-orgdetailsetup","/adm_dashboard","/addteammember").hasAuthority("admin")
+                        .requestMatchers("/", "/orgsetup","/orgsetupprocess","/login","/signup","/css/**","/js/**","assests/**").permitAll() //this will allow any user to access these two pages
+                                .requestMatchers("/setorgdetail/**","/process-orgdetailsetup","/adm_dashboard","/addteammember","/addclient").hasAuthority("admin")
                         .anyRequest().authenticated() //this will make sure to authenticate user for other pages
 
                 )

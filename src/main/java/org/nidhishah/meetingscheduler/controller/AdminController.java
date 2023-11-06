@@ -44,7 +44,9 @@ public class AdminController {
 
     @GetMapping("/adm_dashboard")
     public String GetAdminDashboard(Model model, @ModelAttribute(name="teamAddError")String teamAddError,
-                                    @ModelAttribute(name="teamAddSuccess")String teamAddSuccess) {
+                                    @ModelAttribute(name="teamAddSuccess")String teamAddSuccess,
+                                    @ModelAttribute(name="clientAddError")String clientAddError,
+                                    @ModelAttribute(name="clientAddSuccess")String clientAddSuccess) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
@@ -81,7 +83,12 @@ public class AdminController {
                         model.addAttribute("teamadderror",teamAddError);
                     } else if (!teamAddSuccess.isEmpty()) {
                         model.addAttribute("teamaddsuccess",teamAddSuccess);
-
+                    }
+                    else if(!clientAddError.isEmpty()){
+                        System.out.println("clientaddError:  "+teamAddError + " "+ clientAddError.isEmpty());
+                        model.addAttribute("clientadderror",clientAddError);
+                    } else if (!clientAddSuccess.isEmpty()) {
+                        model.addAttribute("clientaddsuccess",clientAddSuccess);
                     }
                     //get the page
                     return "admin_dashboard";

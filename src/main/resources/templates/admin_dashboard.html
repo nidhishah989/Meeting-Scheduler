@@ -91,6 +91,16 @@
     <div class="card-body">
         <div class="tab-content">
             <div class="tab-pane" id="clients" th:object="${clients}">
+                <!--- MEssage for client -->
+                <div th:if="${clientadderror}" class="alert alert-danger alert-dismissible fade show py-1 my-1" role="alert">
+                    <span th:text="${clientadderror}"></span>
+                    <button type="button" class="btn-close btn-sm py-1 my-1" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${clientaddsuccess}" class="alert alert-success alert-dismissible fade show py-1 my-1" role="alert">
+                    <span th:text="${clientaddsuccess}"></span>
+                    <button type="button" class="btn-close btn-sm py-1 my-1" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <!------------------------- -->
                 <div class="container-fluid justify-content-end">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClientModal" data-role="client" data-action="addclient">Add Client</button>
                 </div>
