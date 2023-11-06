@@ -1,8 +1,9 @@
 package org.nidhishah.meetingscheduler.controller;
 
 import org.nidhishah.meetingscheduler.dto.ClientDTO;
+import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.dto.OrganizationDTO;
-import org.nidhishah.meetingscheduler.dto.TeamDTO;
+
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
 import org.nidhishah.meetingscheduler.entity.User;
 import org.nidhishah.meetingscheduler.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +43,8 @@ public class AdminController {
     }
 
     @GetMapping("/adm_dashboard")
-    public String GetAdminDashboard(Model model) {
+    public String GetAdminDashboard(Model model, @ModelAttribute(name="teamAddError")String teamAddError,
+                                    @ModelAttribute(name="teamAddSuccess")String teamAddSuccess) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
@@ -69,6 +72,17 @@ public class AdminController {
                     model.addAttribute("organization",organizationDTO);
                     model.addAttribute("teammembers",teamMemberDTOList);
                     model.addAttribute("clients",clientDTOList);
+                    model.addAttribute("newmember", new NewOrgMemberDTO());
+                    //if redirected,, check messages, if is there add it
+
+
+                    if(!teamAddError.isEmpty()){
+                        System.out.println("teamaddError:  "+teamAddError + " "+ teamAddError.isEmpty());
+                        model.addAttribute("teamadderror",teamAddError);
+                    } else if (!teamAddSuccess.isEmpty()) {
+                        model.addAttribute("teamaddsuccess",teamAddSuccess);
+
+                    }
                     //get the page
                     return "admin_dashboard";
                 } else {

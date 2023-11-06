@@ -9,4 +9,6 @@ public interface UserService extends UserDetailsService {
 
     public UserDetails loadUserByUsername(String username, String organization);
 
+    public boolean findUserByEmailAndOrganization(String email,String organization);
+
 }

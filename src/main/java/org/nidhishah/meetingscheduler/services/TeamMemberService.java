@@ -1,5 +1,6 @@
 package org.nidhishah.meetingscheduler.services;
 
+import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.dto.OrganizationDTO;
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
 import org.nidhishah.meetingscheduler.dto.UserDTO;
@@ -12,4 +13,6 @@ public interface TeamMemberService {
     public List<TeamMemberDTO> getTeamMembersByOrganization(String organization);
 
     public List<TeamMemberDTO> getTeamMembersByOrgName(String organization);
+
+    public void registerNewTeamMember(NewOrgMemberDTO newOrgMemberDTO, String organization) throws Exception;
 }

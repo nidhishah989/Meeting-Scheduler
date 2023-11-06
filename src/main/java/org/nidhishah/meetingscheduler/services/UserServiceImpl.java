@@ -73,4 +73,16 @@ public class UserServiceImpl implements UserService{
         return authorities;
 
     }
+
+    @Override
+    public boolean findUserByEmailAndOrganization(String email, String organization) {
+        //find user by email in the given organization
+        // if present return true, else return false
+        User user = userRepository.findUserByEmailAndOrganization(email,organization);
+        if(user!=null){
+            return true;
+        }
+        return false;
+    }
+
 }

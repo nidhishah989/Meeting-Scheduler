@@ -3,6 +3,7 @@ package org.nidhishah.meetingscheduler.services;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
+import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.dto.OrganizationDTO;
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
 import org.nidhishah.meetingscheduler.dto.UserDTO;
@@ -12,6 +13,7 @@ import org.nidhishah.meetingscheduler.entity.User;
 import org.nidhishah.meetingscheduler.repository.OrganizationRepository;
 //import org.nidhishah.meetingscheduler.repository.TeamMemberRepository;
 import org.nidhishah.meetingscheduler.repository.UserRepository;
+import org.nidhishah.meetingscheduler.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import org.modelmapper.TypeMap;
 
 @Service
@@ -71,6 +75,7 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             organizationRepository.save(organization);
             adminmember.setRole(role);
             adminmember.setOrganization(organization);
+            adminmember.setEnabled(true);
             userRepository.save(adminmember);
 
         }
@@ -123,5 +128,47 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         }
 
         return teamMemberDTOList;
+    }
+
+    @Override
+    public void registerNewTeamMember(NewOrgMemberDTO newOrgMemberDTO, String organization) throws Exception{
+
+        //get organization
+        try{
+            System.out.println("............IN registerNEwTeamMember.......................");
+            System.out.println("Admin Org: "+organization);
+            Optional<Organization> orgOptional = organizationRepository.findByOrgName(organization);
+            if(orgOptional.isPresent()){
+                // add new Team Member
+                Organization orgdetail = orgOptional.get();
+                System.out.println("After org found, org id:"+orgdetail.getId());
+                //get role
+                Role role = roleService.findByRoleName(newOrgMemberDTO.getRoleName());
+                System.out.println("Role found for teammember: id: "+role.getId());
+                // new member user - set role and organization
+                User newMember = modelMapper.map(newOrgMemberDTO,User.class);
+                newMember.setRole(role);
+                newMember.setOrganization(orgdetail);
+                // set one time passcode
+                // Generate a one-time code
+                String oneTimeCode = CodeGenerator.generateSixDigitCode();
+                newMember.setTempPasscode(oneTimeCode);
+                //set is not active yet
+                newMember.setEnabled(false);
+                //save new member
+                userRepository.save(newMember);
+                //send email to user
+
+            }
+            else{
+                System.out.println("Organization not found during adding new member");
+                throw new Exception("Organization not found.");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new Exception("Organization not found. Exception");
+        }
+
+
     }
 }

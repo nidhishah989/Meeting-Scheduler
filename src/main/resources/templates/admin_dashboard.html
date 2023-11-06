@@ -10,12 +10,14 @@
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="/css/admin_dashboard.css">
 </head>
 
 <body>
+<!---------------------------------NAVBAR ------------------------>
 <nav class="navbar bg-body-tertiary navbar-expand-lg">
     <div class="container-fluid">
         <a class="navbar-brand" th:href="@{/}">
@@ -43,6 +45,7 @@
         </div>
     </div>
 </nav>
+<!---------------------------------ORGANIZATION ------------------------>
 <div>
     <div class="card org-card" th:object="${organization}">
         <h5 class="card-header">Organization Details</h5>
@@ -71,6 +74,7 @@
         </div>
     </div>
 </div>
+<!---------------------------------LIST OF TEAMMEMBER AND CLIENT WITH TWO TABS ------------------------>
 <div class="card text-center">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs" id="myTabs">
@@ -83,11 +87,12 @@
 
         </ul>
     </div>
+    <!---------------------------------CLIENTS LIST ------------------------>
     <div class="card-body">
         <div class="tab-content">
             <div class="tab-pane" id="clients" th:object="${clients}">
                 <div class="container-fluid justify-content-end">
-                    <button class="btn btn-primary"> Add Client </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClientModal" data-role="client" data-action="addclient">Add Client</button>
                 </div>
                 <table class="table">
                     <thead class="table-light">
@@ -100,7 +105,7 @@
                     </thead>
                     <tbody class="table-group-divider">
                     <tr th:if="${#lists.isEmpty(clients)}">
-                        <td colspan="2"> Organization does not have any client. </td>
+                        <td colspan="3"> Organization does not have any client. </td>
 
                     </tr>
                     <tr th:unless="${#lists.isEmpty(clients)}" th:each="client, iterStat : ${clients}">
@@ -113,9 +118,19 @@
                     </tbody>
                 </table>
             </div>
+            <!---------------------------------TEAM MEMBER LIST  ------------------------>
             <div class="tab-pane active" id="team" th:object="${teammembers}">
+                <div th:if="${teamadderror}" class="alert alert-danger alert-dismissible fade show py-1 my-1" role="alert">
+                    <span th:text="${teamadderror}"></span>
+                    <button type="button" class="btn-close btn-sm py-1 my-1" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${teamaddsuccess}" class="alert alert-success alert-dismissible fade show py-1 my-1" role="alert">
+                    <span th:text="${teamaddsuccess}"></span>
+                    <button type="button" class="btn-close btn-sm py-1 my-1" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <div class="container-fluid justify-content-end">
-                    <button class="btn btn-primary"> Add Team Member </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal" data-role="teammember" data-action="addteammember">Add Team Member</button>
                 </div>
                 <table class="table">
                     <thead class="table-light">
@@ -143,6 +158,97 @@
         </div>
     </div>
 </div>
+
+<!----------------------------------------------------------------------->
+<!-- Modal for adding Team Member -->
+<div class="modal fade" id="addMemberModal" tabindex="-1" role="dialog" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" th:object="${newmember}">
+
+            <input type="hidden" name="role" id="roleInput" th:field="*{roleName}">
+
+            <form id="addMemberForm" method="post" th:action="@{/addteammember}">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMemberModalLabel" ></h5>
+<!--                <h5 class="modal-title" id="addMemberModalLabel" th:text="${#strings.isEmpty(newmember.roleName) ? 'Add Member' : (newmember.roleName == 'teammember' ? 'Add Team Member' : 'Add Client')}"></h5>-->
+
+                <button type="button" class="btn close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                    <div class="form-group">
+                        <label for="role">Member Role</label>
+                        <input type="text" class="form-control" id="role" name="roleName" th:value="'teammember'" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" class="form-control" th:field="*{firstName}" id="firstName">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" class="form-control" th:field="*{lastName}" id="lastName">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" th:field="*{email}" id="email">
+                    </div>
+                    <!-- Other form fields for Team Member or Client -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!------------------------------------------------------------------------>
+<!----------------------------------------------------------------------->
+<!-- Modal for adding Client -->
+<div class="modal fade" id="addClientModal" tabindex="-1" role="dialog" aria-labelledby="addClientModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" th:object="${newmember}">
+
+            <input type="hidden" name="role" id="clientRole" th:field="*{roleName}">
+
+            <form id="addClientForm" method="post" th:action="@{/addclient}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addClientModalLabel" ></h5>
+                    <!--                <h5 class="modal-title" id="addMemberModalLabel" th:text="${#strings.isEmpty(newmember.roleName) ? 'Add Member' : (newmember.roleName == 'teammember' ? 'Add Team Member' : 'Add Client')}"></h5>-->
+
+                    <button type="button" class="btn close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" >
+                    <div class="form-group">
+                        <label for="clientRoleName">Member Role</label>
+                        <input type="text" class="form-control" id="clientRoleName" name="roleName" th:value="'client'" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientFirstName">First Name</label>
+                        <input type="text" class="form-control" th:field="*{firstName}" id="clientFirstName">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientLastName">Last Name</label>
+                        <input type="text" class="form-control" th:field="*{lastName}" id="clientLastName">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientEmail">Email</label>
+                        <input type="email" class="form-control" th:field="*{email}" id="clientEmail">
+                    </div>
+                    <!-- Other form fields for Team Member or Client -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!------------------------------------------------------------------------>
 <footer class="footer bg-body-tertiary text-center py-2">
     <div class="container">
         <p>&copy; 2023 Your Company. All rights reserved.</p>
@@ -156,10 +262,11 @@
 
 
 <!-- <script src="data.js"></script> -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-<!--<script src="../Js/adminpage.js"></script>-->
+<script src="/js/admin_dashboard.js"></script>
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 package org.nidhishah.meetingscheduler.repository;
 
 import org.nidhishah.meetingscheduler.dto.ClientDTO;
-import org.nidhishah.meetingscheduler.dto.TeamDTO;
+
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
 import org.nidhishah.meetingscheduler.entity.Organization;
 import org.nidhishah.meetingscheduler.entity.Role;
@@ -17,6 +17,10 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User,Long> {
 
     public User findByUsernameAndOrganizationOrgName(String username, String orgName);
+
+    @Query("select u from User u where u.email=:email and u.organization.id = " +
+            "(select o.id from Organization o where o.orgName = :adminOrganization)")
+    public User findUserByEmailAndOrganization(@Param("email") String email,@Param("adminOrganization") String adminOrganization);
 //    public List<User> getUsersByOrganizationAndRole(Organization organization, List<Role> roles);
 
     /// ///// This does not work......

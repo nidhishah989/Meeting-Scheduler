@@ -27,6 +27,8 @@ public class User {
 
     private String email;
 
+    private boolean isEnabled;
+
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "org_name")
     private Organization organization;
@@ -104,5 +106,13 @@ public class User {
 
     public void setOrganization(Organization organization) {
         this.organization = organization;
+    }
+
+    public boolean getisEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 }
