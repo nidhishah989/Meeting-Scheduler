@@ -31,10 +31,10 @@ public class TeamMemberServiceImpl implements TeamMemberService {
     private final OrganizationService organizationService;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
-//    private final TeamMemberRepository teamMemberRepository;
+
     private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
-    private BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder;
 
 
 

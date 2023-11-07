@@ -20,24 +20,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.Arrays;
+
 import java.util.List;
 
 @Controller
 public class AdminController {
 
-    private OrganizationServiceImpl organizationService;
-    private UserRepository userRepository;
+    private final OrganizationServiceImpl organizationService;
+//    private UserRepository userRepository;
 
-    private TeamMemberServiceImpl teamMemberService;
+    private final TeamMemberServiceImpl teamMemberService;
 
-    private ClientServiceImpl clientService;
+    private final ClientServiceImpl clientService;
 
     @Autowired
-    public AdminController(OrganizationServiceImpl organizationService, UserRepository userRepository
+    public AdminController(OrganizationServiceImpl organizationService
                            , TeamMemberServiceImpl teamMemberService,ClientServiceImpl clientService) {
         this.organizationService = organizationService;
-        this.userRepository = userRepository;
         this.teamMemberService = teamMemberService;
         this.clientService = clientService;
     }
@@ -75,7 +74,7 @@ public class AdminController {
                     model.addAttribute("teammembers",teamMemberDTOList);
                     model.addAttribute("clients",clientDTOList);
                     model.addAttribute("newmember", new NewOrgMemberDTO());
-                    //if redirected,, check messages, if is there add it
+                    //if redirected, check messages, if is there add it
 
 
                     if(!teamAddError.isEmpty()){
@@ -97,7 +96,7 @@ public class AdminController {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();;
+            e.printStackTrace();
             return "file";
         }
         return "file";

@@ -1,6 +1,7 @@
 package org.nidhishah.meetingscheduler.services;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.nidhishah.meetingscheduler.dto.SignUPDTO;
 import org.nidhishah.meetingscheduler.entity.Role;
 import org.nidhishah.meetingscheduler.entity.User;
 import org.nidhishah.meetingscheduler.repository.RoleRepository;
@@ -11,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -23,20 +25,23 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService{
 
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
+
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username, String organization) {
-
-        return null;
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String username, String organization) {
+//
+//        return null;
+//    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("In loaduserbyusername");
