@@ -3,10 +3,7 @@ package org.nidhishah.meetingscheduler.services;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
-import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
-import org.nidhishah.meetingscheduler.dto.OrganizationDTO;
-import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
-import org.nidhishah.meetingscheduler.dto.UserDTO;
+import org.nidhishah.meetingscheduler.dto.*;
 import org.nidhishah.meetingscheduler.entity.Organization;
 import org.nidhishah.meetingscheduler.entity.Role;
 import org.nidhishah.meetingscheduler.entity.User;
@@ -17,6 +14,7 @@ import org.nidhishah.meetingscheduler.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,14 +32,14 @@ public class TeamMemberServiceImpl implements TeamMemberService {
 
     private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
-    private final BCryptPasswordEncoder encoder;
+    private BCryptPasswordEncoder encoder;
 
 
 
     @Autowired
     public TeamMemberServiceImpl(OrganizationService organizationService, RoleService roleService,
                                  ModelMapper modelMapper, UserRepository userRepository,
-                                 OrganizationRepository organizationRepository,BCryptPasswordEncoder encoder) {
+                                 OrganizationRepository organizationRepository,@Lazy BCryptPasswordEncoder encoder) {
         this.organizationService = organizationService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
@@ -168,5 +166,42 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             e.printStackTrace();
             throw new Exception("Organization not found. Exception");
         }
+    }
+
+    /*
+     * ********** If sign up person is not admin-> complete Sign Up process
+     * *********** return rolename or empty string
+     * */
+    @Override
+    public String completeUserSignUpProcess(SignUPDTO signUPDTO) {
+        //check the user
+        User user = userRepository.findUserByEmailAndOrganization(signUPDTO.getEmail(), signUPDTO.getOrganization());
+        System.out.println("SignUP Procsess: found user: "+ user.getOrganization().getOrgName() );
+        // user role is not null and not "admin"
+        if (user.getRole() != null && !"admin".equals(user.getRole().getRoleName())) {
+            System.out.println("SignUP Procsess: user role: "+ user.getRole().getRoleName());
+            //if user is not enabled, and password is empty: good to go for completing sign up
+            System.out.println("SignUP Procsess: user enable: "+ user.getisEnabled() );
+//            System.out.println("SignUP Procsess: user password Empty?: "+ user.getPassword().isEmpty() );
+            if (!user.getisEnabled()) {
+
+                System.out.println("SignUP Procsess: user temp passcode from database: "+ user.getTempPasscode());
+                System.out.println("SignUP Procsess: user input passcode: "+ signUPDTO.getTempPasccode() );
+                //check given passcode is matching with user database passcode
+                if (signUPDTO.getTempPasccode().equals(user.getTempPasscode())) {
+                    // complete sign up
+                    user.setUsername(signUPDTO.getEmail().split("@")[0].toLowerCase());
+                    user.setEnabled(true);
+                    user.setPassword(encoder.encode(signUPDTO.getPassword()));
+                    //remove temp code, as user is active now
+                    user.setTempPasscode("");
+                    userRepository.save(user);
+                    System.out.println("After user is saved, "+user.getRole().getRoleName());
+                    // return user rolename
+                    return user.getRole().getRoleName();
+                }
+            }
+        }
+        return "";
     }
 }

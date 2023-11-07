@@ -33,7 +33,7 @@ public class SecurityConfiguration {
     //bcrypt bean definition
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(11);
+        return new BCryptPasswordEncoder(12);
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,6 +48,7 @@ public class SecurityConfiguration {
 
                 .formLogin((form) -> form
                         .loginPage("/login") //login page accessible to all
+                        .loginProcessingUrl("/login")
                         .permitAll()
                 )
                 .logout((logout) -> logout.permitAll()); //logout page accessible to all

@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService{
 
         System.out.println("Found User: "+currentUser);
         System.out.println("CurrentUser: "+ currentUser.getUsername());
+        System.out.println(currentUser.getPassword());
         if(currentUser == null) {
             throw new UsernameNotFoundException("Invalid login or password");
         }

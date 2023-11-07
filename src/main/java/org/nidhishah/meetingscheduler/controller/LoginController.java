@@ -2,8 +2,9 @@ package org.nidhishah.meetingscheduler.controller;
 
 import org.nidhishah.meetingscheduler.dto.SignUPDTO;
 import org.nidhishah.meetingscheduler.services.OrganizationServiceImpl;
+import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
 import org.nidhishah.meetingscheduler.services.UserServiceImpl;
-import org.nidhishah.meetingscheduler.services.UserSignUpServiceImpl;
+//import org.nidhishah.meetingscheduler.services.UserSignUpServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +22,15 @@ public class LoginController {
     private OrganizationServiceImpl organizationService;
     private UserServiceImpl userService;
 
-    private final UserSignUpServiceImpl userSignUpService;
+//    private final UserSignUpServiceImpl userSignUpService;
+    private TeamMemberServiceImpl teamMemberService;
 
     @Autowired
     public LoginController(OrganizationServiceImpl organizationService, UserServiceImpl userService,
-                           UserSignUpServiceImpl userSignUpService) {
+                           TeamMemberServiceImpl teamMemberService) {
         this.organizationService = organizationService;
         this.userService = userService;
-        this.userSignUpService = userSignUpService;
+        this.teamMemberService = teamMemberService;
     }
 
     @GetMapping("/login")
@@ -38,11 +40,11 @@ public class LoginController {
     }
 
 
-    @PostMapping("/login")
-    public String loginprocess()
-    {
-        return "file";
-    }
+//    @PostMapping("/login")
+//    public String loginprocess()
+//    {
+//        return "file";
+//    }
 
     @GetMapping("/signup")
     public String getSignUpPage(Model model,@ModelAttribute(name="Error") String Error){
@@ -68,7 +70,8 @@ public class LoginController {
                 //find user already there for given organization
                 if (userService.findUserByEmailAndOrganization(signUPDTO.getEmail(), signUPDTO.getOrganization())) {
                     // complete signup process - if not empty- as per rolename returned, redirect user
-                    String roleName = userSignUpService.completeUserSignUpProcess(signUPDTO);
+                    System.out.println("SIgn UP user Password::"+signUPDTO.getPassword());
+                    String roleName = teamMemberService.completeUserSignUpProcess(signUPDTO);
                     if (!roleName.isEmpty()) {
                         if (roleName.equals("teammember")) {
                             //redirect for availability setup
