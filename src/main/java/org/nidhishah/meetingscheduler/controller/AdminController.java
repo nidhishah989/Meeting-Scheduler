@@ -12,6 +12,8 @@ import org.nidhishah.meetingscheduler.services.ClientServiceImpl;
 import org.nidhishah.meetingscheduler.services.OrganizationService;
 import org.nidhishah.meetingscheduler.services.OrganizationServiceImpl;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +28,7 @@ import java.util.List;
 @Controller
 public class AdminController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class.getName());
     private final OrganizationServiceImpl organizationService;
 //    private UserRepository userRepository;
 
@@ -51,6 +54,9 @@ public class AdminController {
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
                 String adminOrganization = userPrincipal.getOrganizationName();
+
+                logger.info("Authenticated User: "+ userPrincipal.getUsername() + "from " + adminOrganization + "organization");
+
                 System.out.println("authenticated adminORganization: " + adminOrganization);
                 // find the organization
                 OrganizationDTO organizationDTO = organizationService.findByOrgName(adminOrganization);
@@ -60,6 +66,7 @@ public class AdminController {
                         + organizationDTO.getOrgState() + "--->Contact: " + organizationDTO.getOrgContact());
 
                 if (organizationDTO != null) {
+                    logger.debug("Organization from authenticated user presents in organization table. Good to Go.");
                     //get list of teammembers for given organzation
                     List<TeamMemberDTO> teamMemberDTOList = teamMemberService.getTeamMembersByOrgName(adminOrganization);
 
