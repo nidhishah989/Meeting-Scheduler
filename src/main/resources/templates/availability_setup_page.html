@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,37 +22,39 @@
 </head>
 
 <body>
-
+<!---------------------------- NAVBAR ------------------------>
 <nav class="navbar bg-body-tertiary navbar-expand-lg">
     <div class="container-fluid">
         <a class="navbar-brand" th:href="@{/}">
-            <!-- <img src="Meetsy_logo.png" alt="M" width="60" class="d-inline-block">
-                 <span class ="d-inline-block" id="logo_name">eetsy</span> -->
             <div class="d-flex align-items-center">
                 <img src="/assests/Meetsy_logo.png" alt="M" width="65">
-                <!-- <span id="logo_name">eetsy</span> -->
             </div>
         </a>
-        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
-              <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="#">About</a>
-                <a class="nav-link" href="#">Contact</a>
 
-              </div> -->
-        <div class="d-flex pl-4 adminnav">
-            <div class="d-flex align-items-center">
-                <span><i class="bi bi-person-fill pr-5"></i></span>
-                <p class='pl=2 mb-0' id="admin" value=""></p>
+        <!-- Replace the toggle button with a user icon -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Use your custom user icon here -->
+            <i class="bi bi-person-fill" style="color: whitesmoke; border: none"></i>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <div class="navbar-nav">
+                <div class="d-flex pl-4 adminnav">
+                    <div class="d-flex align-items-center">
+                        <!-- Display the user icon on larger screens -->
+                        <span class="d-none d-lg-block"><i class="bi bi-person-fill pr-2"></i></span>
+                        <p class='px-2 mb-0' id="admin" th:text="${#authorization.getAuthentication().name}"></p>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="btn btn-primary">Logout</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </nav>
-
-
-<!-- Your page content goes here -->
+<!------------------------ NAVBAR END -------------------------->
+<!------------------- AVAILABILITY FORM ------------------------>
 
 <div class="container-fluid pt-3 px-3" style="background-color: rgb(245, 248, 248);">
     <div class="row mx-3">
@@ -59,13 +62,13 @@
             <h4>Let's Set Your Availability</h4>
 
             <!-- Add your form here -->
-            <form>
+            <form th:action="@{/saveavailability}" method="post" th:object="${teammeber}">
                 <!-- Form fields, checkboxes, inputs, and buttons go here -->
-                <div class="row mb-3 g-3">
+                <div class="row mb-3 g-3" >
                     <!-- Meeting Window -->
                     <div class="col-md-6">
                         <label class="form-label" for="meetingWindow">Meeting Window</label>
-                        <select class="form-control" id="meetingWindow">
+                        <select class="form-control" id="meetingWindow" th:field="*{meetingWindow}">
                             <option value="30" selected>30 minutes</option>
                             <!-- Add more options as needed -->
                         </select>
@@ -76,12 +79,12 @@
                         <div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="onSite" name="meetingType"
-                                       value="OnSite">
+                                       value="OnSite" th:field="*{onSiteMeetingAvailable}">
                                 <label class="form-check-label" for="onSite">OnSite</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="zoom" name="meetingType"
-                                       value="Zoom">
+                                       value="Zoom" th:field="*{zoomMeetingAvailable}" >
                                 <label class="form-check-label" for="zoom">Zoom</label>
                             </div>
                         </div>
@@ -92,7 +95,7 @@
                     <!-- Your TimeZone -->
                     <div class="col-md-6">
                         <label class="form-label" for="timezone">Your TimeZone</label>
-                        <select class="form-control scrollable-dropdown" id="timezone" name="timezone">
+                        <select class="form-control scrollable-dropdown" id="timezone" name="timezone" th:field="*{timeZone}">
                             <!-- JavaScript will populate this list -->
                         </select>
                     </div>
@@ -100,32 +103,31 @@
                     <!-- Zoom Link -->
                     <div class="col-md-6" id="zoomLinkDiv" style="display: none;">
                         <label class="form-label" for="zoomLink">Zoom Link</label>
-                        <input type="text" class="form-control" id="zoomLink" name="zoomLink">
+                        <input type="text" class="form-control" id="zoomLink" name="zoomLink" th:field="*{zoomMeetingLink}">
                     </div>
                 </div>
 
                 <div class="container mx-0 p-0">
-                    <div class="row">
+                    <div class="row" th:object="${daysavail}">
                         <!-- ... (previous content) ... -->
                         <div class="col-12">
-                            <h4> Default Available Hours Setting</h4>
+                            <h4> Weekly Hours Setup</h4>
                         </div>
                         <div class="row">
                             <!----        -->
-                            <div class="col-12">
+                            <div class="col-12" th:each="timeSlot, mondayIndex : ${daysavail.mondayTimeSlot}">
                                 <!-- FOR MONDAY TIME SLOTS-->
                                 <div class="card">
                                     <!-- Card content for Monday -->
-                                    <div class="card-body">
+                                    <div class="card-body" >
                                         <div class="d-flex justify-content-between pb-1">
                                             <h5 class="card-title">Monday</h5>
                                             <button type="button" class="btn btn-primary">+</button>
                                         </div>
                                         <div class="row d-flex">
                                             <div class="col-md-6">
-                                                <div class="input-group date  bootstrap-timepicker"
-                                                     id="monday-start-time">
-                                                    <input type="text" class="form-control timePicker">
+                                                <div class="input-group date  bootstrap-timepicker">
+                                                    <input type="text" class="form-control timePicker" th:field="*{mondayTimeSlot[__${mondayIndex.index}__].startTime}">
                                                     <span class="input-group-addon">
                                                             <span class="input-group-text bg-white">
                                                                 <i class="bi bi-clock" aria-hidden="true"></i>
@@ -135,8 +137,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="input-group date bootstrap-timepicker"
-                                                     id="monday-end-time">
-                                                    <input type="text" class="form-control timePicker ">
+                                                     th:id="${'monday-end-time-' + mondayIndex.index}">
+                                                    <input type="text" class="form-control timePicker" th:field="*{mondayTimeSlot[__${mondayIndex.index}__].endTime}">
                                                     <span class="input-group-addon">
                                                             <span class="input-group-text bg-white">
                                                                 <i class="bi bi-clock" aria-hidden="true"></i>
@@ -368,6 +370,10 @@
                             <!--row end-->
                         </div>
 
+                    </div>
+                    <!--------- Button to save Time slots --->
+                    <div>
+                        <button class="btn btn-primary" type="submit" >Save Availability</button>
                     </div>
 
                 </div>

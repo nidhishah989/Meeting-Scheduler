@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <!--NIDHI SHAH-->
 <head>
     <meta charset="UTF-8">
@@ -18,33 +19,38 @@
 
 <body>
 <!---------------------------------NAVBAR ------------------------>
+
 <nav class="navbar bg-body-tertiary navbar-expand-lg">
     <div class="container-fluid">
         <a class="navbar-brand" th:href="@{/}">
-            <!-- <img src="Meetsy_logo.png" alt="M" width="60" class="d-inline-block">
-                 <span class ="d-inline-block" id="logo_name">eetsy</span> -->
             <div class="d-flex align-items-center">
                 <img src="/assests/Meetsy_logo.png" alt="M" width="65">
-                <!-- <span id="logo_name">eetsy</span> -->
             </div>
         </a>
-        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
-              <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="#">About</a>
-                <a class="nav-link" href="#">Contact</a>
 
-              </div> -->
-        <div class="d-flex pl-4 adminnav">
-            <div class="d-flex align-items-center">
-                <span><i class="bi bi-person-fill pr-5"></i></span>
-                <p class='pl=2 mb-0' id="admin" value=""></p>
+        <!-- Replace the toggle button with a user icon -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Use your custom user icon here -->
+            <i class="bi bi-person-fill" style="color: whitesmoke; border: none"></i>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <div class="navbar-nav">
+                <div class="d-flex pl-4 adminnav">
+                    <div class="d-flex align-items-center">
+                        <!-- Display the user icon on larger screens -->
+                        <span class="d-none d-lg-block"><i class="bi bi-person-fill pr-2"></i></span>
+                        <p class='px-2 mb-0' id="admin" th:text="${#authorization.getAuthentication().name}"></p>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="btn btn-primary">Logout</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </nav>
+
 <!---------------------------------ORGANIZATION ------------------------>
 <div>
     <div class="card org-card" th:object="${organization}">

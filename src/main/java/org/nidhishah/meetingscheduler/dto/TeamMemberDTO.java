@@ -16,9 +16,11 @@ public class TeamMemberDTO {
 //    private String password;
     private String roleName; // To store the role name from the associated Role entity
     private String orgName; // To store the organization name from the associated Organization entity
+    private String meetingWindow;
     private boolean zoomMeetingAvailable;
     private boolean onSiteMeetingAvailable;
     private String zoomMeetingLink;
+    private String timeZone;
 
 
     public TeamMemberDTO() {

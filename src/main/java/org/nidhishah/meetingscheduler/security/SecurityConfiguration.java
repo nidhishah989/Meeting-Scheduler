@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
@@ -42,6 +43,7 @@ public class SecurityConfiguration {
                         (auth) -> auth
                         .requestMatchers("/", "/orgsetup","/orgsetupprocess","/login","/signup","/css/**","/js/**","assests/**").permitAll() //this will allow any user to access these two pages
                                 .requestMatchers("/setorgdetail/**","/process-orgdetailsetup","/adm_dashboard","/addteammember","/addclient").hasAuthority("admin")
+                                .requestMatchers("/availability_setup").hasAnyAuthority("admin","teammember")
                         .anyRequest().authenticated() //this will make sure to authenticate user for other pages
 
                 )
@@ -52,7 +54,14 @@ public class SecurityConfiguration {
                         .successForwardUrl("/findwhertogo")
                         .permitAll()
                 )
-                .logout((logout) -> logout.permitAll()); //logout page accessible to all
+                .logout(
+                        logout -> logout
+                                .invalidateHttpSession(true)
+                                .clearAuthentication(true)
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                .logoutSuccessUrl("/")
+                                .permitAll()
+                );
 
         return http.build();
     }

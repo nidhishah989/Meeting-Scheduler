@@ -2,6 +2,8 @@ package org.nidhishah.meetingscheduler.controller;
 
 import org.nidhishah.meetingscheduler.dto.DaysAvailabilityDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
+import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
+import org.nidhishah.meetingscheduler.dto.TimeSlot;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
 import org.nidhishah.meetingscheduler.services.UserServiceImpl;
@@ -15,6 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class TeamMemberController {
@@ -71,7 +77,47 @@ public class TeamMemberController {
 
     @GetMapping("/availability_setup")
     public String getAvailabilitySetupForm(Model model){
-        model.addAttribute("daysavail",new DaysAvailabilityDTO());
-        return "availability_setup_page.html";
+
+        try{
+            //get authenticated person info
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+                //organization information collection
+                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                TeamMemberDTO teamMemberDTO = new TeamMemberDTO();
+                teamMemberDTO.setOrgName(userPrincipal.getOrganizationName());
+                DaysAvailabilityDTO availabilityDTO = new DaysAvailabilityDTO();
+//                TimeSlot mondayslot = new TimeSlot(LocalTime.of(9,0),LocalTime.of(17,0));
+//                List<TimeSlot> mondayTimeSlots = new ArrayList<>();
+//                mondayTimeSlots.add(mondayslot);
+//                availabilityDTO.setMondayTimeSlot(mondayTimeSlots);
+                //teammemberdto for getting meeting time, meeting type. zoomlink thing
+                model.addAttribute("teammeber",teamMemberDTO);
+                model.addAttribute("daysavail",availabilityDTO);
+                return "availability_setup_page";
+            }
+            else{throw new Exception();}
+        }catch (Exception e){
+
+            return "login";
+        }
+    }
+
+    @PostMapping("/saveavailability")
+    public void setTeamMemberAvailability(@ModelAttribute(name="teammeber") TeamMemberDTO teamMemberDTO,
+                                          @ModelAttribute(name="daysavail") DaysAvailabilityDTO availabilityDTO){
+        System.out.println("::::Set Availability for Team MEmber::::::");
+        System.out.println("ORg name:: "+teamMemberDTO.getOrgName());
+        System.out.println("meeting Window::" + teamMemberDTO.getMeetingWindow());
+        System.out.println("timezone :: "+teamMemberDTO.getTimeZone());
+        System.out.println("zoommeetingLink ::"+ teamMemberDTO.getZoomMeetingLink());
+        System.out.println("zoom meeting setup? ::" + teamMemberDTO.isZoomMeetingAvailable());
+        System.out.println("onsitemeeting setup? :: "+teamMemberDTO.isOnSiteMeetingAvailable());
+        System.out.println("::::Availability for Team MEmber::::::");
+        System.out.println("MONDAY TIMESLOTS NUMBER::: "+availabilityDTO.getMondayTimeSlot().size());
+        for(TimeSlot slot : availabilityDTO.getMondayTimeSlot()){
+            System.out.println("STRT TIME::: "+ slot.getStartTime());
+            System.out.println("END TIME:::: "+slot.getEndTime());
+        }
     }
 }
