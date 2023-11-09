@@ -1,16 +1,22 @@
 package org.nidhishah.meetingscheduler.controller;
 
 import org.nidhishah.meetingscheduler.dto.SignUPDTO;
+import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.OrganizationServiceImpl;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
 import org.nidhishah.meetingscheduler.services.UserServiceImpl;
 //import org.nidhishah.meetingscheduler.services.UserSignUpServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.lang.reflect.Array;
@@ -19,6 +25,7 @@ import java.util.Arrays;
 @Controller
 public class LoginController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class.getName());
     private OrganizationServiceImpl organizationService;
     private UserServiceImpl userService;
 
@@ -98,6 +105,38 @@ public class LoginController {
             redirectAttributes.addFlashAttribute("Error","Unsuccessful Sign Up. Confirm your information. Already Sign Up! Login");
         }
         return "redirect:/signup";
+    }
+
+
+    @RequestMapping("/findwhertogo")
+    public String chooseRedirectBasedOnRole() {
+        logger.debug("::Redirect URL Controller called::");
+        try {
+            //get authenticated user info
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+//                logger.debug("The logged in user role is: "+ userPrincipal.getAuthorities().toString());
+                String role = userPrincipal.getAuthorities().isEmpty() ? "" : userPrincipal.getAuthorities().iterator().next().getAuthority();
+                System.out.println("Looged in user role is: " + role);
+                //if admin - open admin dashboard
+                if (role.equals("admin")) {
+                    return "redirect:/adm_dashboard";
+                }
+                //if teammember - open teammember page
+                else if (role.equals("teammember")) {
+                    return "teammember_page";
+                }
+                //if client - open client page
+                else if (role.equals("client")) {
+                    return "client_page";
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "file";
     }
 
 }

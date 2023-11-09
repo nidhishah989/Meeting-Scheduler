@@ -49,6 +49,7 @@ public class SecurityConfiguration {
                 .formLogin((form) -> form
                         .loginPage("/login") //login page accessible to all
                         .loginProcessingUrl("/login")
+                        .successForwardUrl("/findwhertogo")
                         .permitAll()
                 )
                 .logout((logout) -> logout.permitAll()); //logout page accessible to all
