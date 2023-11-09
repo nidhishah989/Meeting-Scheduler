@@ -1,5 +1,6 @@
 package org.nidhishah.meetingscheduler.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.nidhishah.meetingscheduler.dto.SignUPDTO;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.OrganizationServiceImpl;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -82,19 +84,12 @@ public class LoginController {
                     if (!roleName.isEmpty()) {
                         if (roleName.equals("teammember")) {
                             //redirect for availability setup
-                            return "file";
+                            return "redirect:/availability_setup";
                         } else if (roleName.equals("client")) {
                             //redirect for meeting schedule page
                             return "file";
                         }
                     }
-//                    else{
-//                        throw new Exception();
-//                    }
-//                }
-//                else{
-//                    throw new Exception();
-//                }
                 }
             }
             //Either organization not there, or user is not there, or something went wrong in user Signup
@@ -109,12 +104,26 @@ public class LoginController {
 
 
     @RequestMapping("/findwhertogo")
-    public String chooseRedirectBasedOnRole() {
+    public String chooseRedirectBasedOnRole(HttpServletRequest request) {
         logger.debug("::Redirect URL Controller called::");
         try {
             //get authenticated user info
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+                /// if redirect url present: redirect user there //
+                // Check if a SavedRequest is available
+                SavedRequest savedRequest = (SavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+                if (savedRequest != null && savedRequest.getRedirectUrl() != null) {
+                    // Get the target URL from the saved request
+                    String targetUrl = savedRequest.getRedirectUrl();
+
+                    // Clear the saved request from the session to avoid processing it multiple times
+                    request.getSession().removeAttribute("SPRING_SECURITY_SAVED_REQUEST");
+
+                    // Redirect to the target URL from the saved request
+                    return "redirect:" + targetUrl;
+                }
+                /// Else check logged in user role and redirect as per role ///
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 //                logger.debug("The logged in user role is: "+ userPrincipal.getAuthorities().toString());
                 String role = userPrincipal.getAuthorities().isEmpty() ? "" : userPrincipal.getAuthorities().iterator().next().getAuthority();
@@ -136,7 +145,7 @@ public class LoginController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "file";
+        return "login";
     }
 
 }

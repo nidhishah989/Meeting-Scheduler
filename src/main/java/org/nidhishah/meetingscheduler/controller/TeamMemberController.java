@@ -1,5 +1,6 @@
 package org.nidhishah.meetingscheduler.controller;
 
+import org.nidhishah.meetingscheduler.dto.DaysAvailabilityDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
@@ -68,4 +69,9 @@ public class TeamMemberController {
         return "file";
     }
 
+    @GetMapping("/availability_setup")
+    public String getAvailabilitySetupForm(Model model){
+        model.addAttribute("daysavail",new DaysAvailabilityDTO());
+        return "availability_setup_page.html";
+    }
 }

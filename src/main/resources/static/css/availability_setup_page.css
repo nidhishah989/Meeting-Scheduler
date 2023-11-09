@@ -1,0 +1,18 @@
+.bg-body-tertiary{
+    background-color: #315a70!important;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    font-family:'Gabarito';
+}
+
+.adminnav{
+    text-align: center;
+    font-size:24px;
+    color: whitesmoke;
+
+}

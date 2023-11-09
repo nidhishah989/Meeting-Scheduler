@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Boostrap min.css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- bootstrap datepicker min.css-->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+    <!-- -->
+    <!--- Extra css for fonts and icons-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/availability_setup_page.css">
+    <title>Your Meeting Scheduler</title>
+</head>
+
+<body>
+
+<nav class="navbar bg-body-tertiary navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">
+            <!-- <img src="Meetsy_logo.png" alt="M" width="60" class="d-inline-block">
+                 <span class ="d-inline-block" id="logo_name">eetsy</span> -->
+            <div class="d-flex align-items-center">
+                <img src="/assests/Meetsy_logo.png" alt="M" width="65">
+                <!-- <span id="logo_name">eetsy</span> -->
+            </div>
+        </a>
+        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+              <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="#">About</a>
+                <a class="nav-link" href="#">Contact</a>
+
+              </div> -->
+        <div class="d-flex pl-4 adminnav">
+            <div class="d-flex align-items-center">
+                <span><i class="bi bi-person-fill pr-5"></i></span>
+                <p class='pl=2 mb-0' id="admin" value=""></p>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Your page content goes here -->
+
+<div class="container-fluid pt-3 px-3" style="background-color: rgb(245, 248, 248);">
+    <div class="row mx-3">
+        <div class="col">
+            <h4>Let's Set Your Availability</h4>
+
+            <!-- Add your form here -->
+            <form>
+                <!-- Form fields, checkboxes, inputs, and buttons go here -->
+                <div class="row mb-3 g-3">
+                    <!-- Meeting Window -->
+                    <div class="col-md-6">
+                        <label class="form-label" for="meetingWindow">Meeting Window</label>
+                        <select class="form-control" id="meetingWindow">
+                            <option value="30" selected>30 minutes</option>
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+                    <!-- Meeting Type -->
+                    <div class="col-md-6">
+                        <label class="form-label">Meeting Type</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="onSite" name="meetingType"
+                                       value="OnSite">
+                                <label class="form-check-label" for="onSite">OnSite</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="zoom" name="meetingType"
+                                       value="Zoom">
+                                <label class="form-check-label" for="zoom">Zoom</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Timezone and zoom meeting link -->
+                <div class="row mb-3 g-3">
+                    <!-- Your TimeZone -->
+                    <div class="col-md-6">
+                        <label class="form-label" for="timezone">Your TimeZone</label>
+                        <select class="form-control scrollable-dropdown" id="timezone" name="timezone">
+                            <!-- JavaScript will populate this list -->
+                        </select>
+                    </div>
+
+                    <!-- Zoom Link -->
+                    <div class="col-md-6" id="zoomLinkDiv" style="display: none;">
+                        <label class="form-label" for="zoomLink">Zoom Link</label>
+                        <input type="text" class="form-control" id="zoomLink" name="zoomLink">
+                    </div>
+                </div>
+
+                <div class="container mx-0 p-0">
+                    <div class="row">
+                        <!-- ... (previous content) ... -->
+                        <div class="col-12">
+                            <h4> Default Available Hours Setting</h4>
+                        </div>
+                        <div class="row">
+                            <!----        -->
+                            <div class="col-12">
+                                <!-- FOR MONDAY TIME SLOTS-->
+                                <div class="card">
+                                    <!-- Card content for Monday -->
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between pb-1">
+                                            <h5 class="card-title">Monday</h5>
+                                            <button type="button" class="btn btn-primary">+</button>
+                                        </div>
+                                        <div class="row d-flex">
+                                            <div class="col-md-6">
+                                                <div class="input-group date  bootstrap-timepicker"
+                                                     id="monday-start-time">
+                                                    <input type="text" class="form-control timePicker">
+                                                    <span class="input-group-addon">
+                                                            <span class="input-group-text bg-white">
+                                                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                                            </span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date bootstrap-timepicker"
+                                                     id="monday-end-time">
+                                                    <input type="text" class="form-control timePicker ">
+                                                    <span class="input-group-addon">
+                                                            <span class="input-group-text bg-white">
+                                                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                                            </span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- FOR TUESDAY TIMESLOT -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <!-- Tuesday content -->
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between pb-1">
+                                            <h5 class="card-title">Tuesday</h5>
+                                            <button type="button" class="btn btn-primary">+</button>
+                                        </div>
+                                        <div class="row d-flex">
+                                            <div class="col-md-6">
+                                                <div class="input-group date  bootstrap-timepicker"
+                                                     id="tuesday-start-time">
+                                                    <input type="text" class="form-control timePicker">
+                                                    <span class="input-group-addon">
+                                                            <span class="input-group-text bg-white">
+                                                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                                            </span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date bootstrap-timepicker"
+                                                     id="tuesday-end-time">
+                                                    <input type="text" class="form-control timePicker ">
+                                                    <span class="input-group-addon">
+                                                            <span class="input-group-text bg-white">
+                                                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                                            </span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!----        -->
+                            <div class="col-12">
+                                <!-- FOR WEDNESDAY TIME SLOTS-->
+                                <div class="card">
+                                    <!-- Card content for wednesday -->
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between pb-1">
+                                            <h5 class="card-title">Wednesday</h5>
+                                            <button type="button" class="btn btn-primary">+</button>
+                                        </div>
+                                        <div class="row d-flex">
+                                            <div class="col-md-6">
+                                                <div class="input-group date  bootstrap-timepicker"
+                                                     id="wednesday-start-time">
+                                                    <input type="text" class="form-control timePicker">
+                                                    <span class="input-group-addon">
+                                                            <span class="input-group-text bg-white">
+                                                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                                            </span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date bootstrap-timepicker"
+                                                     id="wednesday-end-time">
+                                                    <input type="text" class="form-control timePicker ">
+                                                    <span class="input-group-addon">
+                                                            <span class="input-group-text bg-white">
+                                                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                                            </span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!----        -->
+                            <div class="col-12">
+                                <!-- FOR Thursday TIME SLOTS-->
+                                <div class="card">
+                                    <!-- Card content for Monday -->
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between pb-1">
+                                            <h5 class="card-title">Thursday</h5>
+                                            <button type="button" class="btn btn-primary">+</button>
+                                        </div>
+                                        <div class="row d-flex">
+                                            <div class="col-md-6">
+                                                <div class="input-group date  bootstrap-timepicker"
+                                                     id="thursday-start-time">
+                                                    <input type="text" class="form-control timePicker">
+                                                    <span class="input-group-addon">
+                                                            <span class="input-group-text bg-white">
+                                                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                                            </span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date bootstrap-timepicker"
+                                                     id="thursday-end-time">
+                                                    <input type="text" class="form-control timePicker ">
+                                                    <span class="input-group-addon">
+                                                            <span class="input-group-text bg-white">
+                                                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                                            </span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!----        -->
+                            <div class="col-12">
+                                <!-- FOR firday TIME SLOTS-->
+                                <div class="card">
+                                    <!-- Card content for Friday -->
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between pb-1">
+                                            <h5 class="card-title">Friday</h5>
+                                            <button type="button" class="btn btn-primary">+</button>
+                                        </div>
+                                        <div class="row d-flex">
+                                            <div class="col-md-6">
+                                                <div class="input-group date  bootstrap-timepicker" id="firday-start-time">
+                                                    <input type="text" class="form-control timePicker">
+                                                    <span class="input-group-addon">
+                                                                <span class="input-group-text bg-white">
+                                                                    <i class="bi bi-clock"aria-hidden="true"></i>
+                                                                </span>
+                                                            </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date bootstrap-timepicker" id="friday-end-time" >
+                                                    <input type="text" class="form-control timePicker ">
+                                                    <span class="input-group-addon">
+                                                                <span class="input-group-text bg-white">
+                                                                    <i class="bi bi-clock"aria-hidden="true"></i>
+                                                                </span>
+                                                            </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!----        -->
+                            <div class="col-12">
+                                <!-- FOR saturday TIME SLOTS-->
+                                <div class="card">
+                                    <!-- Card content for saturday -->
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between pb-1">
+                                            <h5 class="card-title">Saturday</h5>
+                                            <button type="button" class="btn btn-primary">+</button>
+                                        </div>
+                                        <div class="row d-flex">
+                                            <div class="col-md-6">
+                                                <div class="input-group date  bootstrap-timepicker" id="saturday-start-time">
+                                                    <input type="text" class="form-control timePicker">
+                                                    <span class="input-group-addon">
+                                                                <span class="input-group-text bg-white">
+                                                                    <i class="bi bi-clock"aria-hidden="true"></i>
+                                                                </span>
+                                                            </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date bootstrap-timepicker" id="saturday-end-time" >
+                                                    <input type="text" class="form-control timePicker ">
+                                                    <span class="input-group-addon">
+                                                                <span class="input-group-text bg-white">
+                                                                    <i class="bi bi-clock"aria-hidden="true"></i>
+                                                                </span>
+                                                            </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!----        -->
+                            <div class="col-12">
+                                <!-- FOR Sunday TIME SLOTS-->
+                                <div class="card">
+                                    <!-- Card content for sunday -->
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between pb-1">
+                                            <h5 class="card-title">Sunday</h5>
+                                            <button type="button" class="btn btn-primary">+</button>
+                                        </div>
+                                        <div class="row d-flex">
+                                            <div class="col-md-6">
+                                                <div class="input-group date  bootstrap-timepicker" id="sunday-start-time">
+                                                    <input type="text" class="form-control timePicker">
+                                                    <span class="input-group-addon">
+                                                                <span class="input-group-text bg-white">
+                                                                    <i class="bi bi-clock"aria-hidden="true"></i>
+                                                                </span>
+                                                            </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="input-group date bootstrap-timepicker" id="sunday-end-time" >
+                                                    <input type="text" class="form-control timePicker ">
+                                                    <span class="input-group-addon">
+                                                                <span class="input-group-text bg-white">
+                                                                    <i class="bi bi-clock"aria-hidden="true"></i>
+                                                                </span>
+                                                            </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--row end-->
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <!-- <div class="col-1"> -->
+        <!-- Calendar image -->
+        <!-- <img src="../assests/calender_back.jpg" alt="Calendar" class="img-fluid float-right"> -->
+        <!-- </div> -->
+    </div>
+</div>
+<!-- Jquery to support datepicker-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- moment js for time and timezone-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<!-- moment-timezone library -->
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.36/moment-timezone-with-data.min.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+<!-- date picker JS-->
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/js/availability_setup_page.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.bootstrap-timepicker').datetimepicker({
+            format: 'HH:mm'
+        });
+    });
+</script>
+</body>
+
+</html>
