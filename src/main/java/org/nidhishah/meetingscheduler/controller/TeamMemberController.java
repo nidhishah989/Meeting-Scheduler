@@ -86,11 +86,9 @@ public class TeamMemberController {
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
                 TeamMemberDTO teamMemberDTO = new TeamMemberDTO();
                 teamMemberDTO.setOrgName(userPrincipal.getOrganizationName());
-                DaysAvailabilityDTO availabilityDTO = new DaysAvailabilityDTO();
-//                TimeSlot mondayslot = new TimeSlot(LocalTime.of(9,0),LocalTime.of(17,0));
-//                List<TimeSlot> mondayTimeSlots = new ArrayList<>();
-//                mondayTimeSlots.add(mondayslot);
-//                availabilityDTO.setMondayTimeSlot(mondayTimeSlots);
+                // if teammember have the availability get them or get default one
+                DaysAvailabilityDTO availabilityDTO = teamMemberService.getTeamMemberAvailability(userPrincipal.getUsername(),userPrincipal.getOrganizationName());
+                System.out.println("Sunday end time: "+ availabilityDTO.getSundayTimeSlot().get(0).getEndTime());
                 //teammemberdto for getting meeting time, meeting type. zoomlink thing
                 model.addAttribute("teammeber",teamMemberDTO);
                 model.addAttribute("daysavail",availabilityDTO);
@@ -116,6 +114,30 @@ public class TeamMemberController {
         System.out.println("::::Availability for Team MEmber::::::");
         System.out.println("MONDAY TIMESLOTS NUMBER::: "+availabilityDTO.getMondayTimeSlot().size());
         for(TimeSlot slot : availabilityDTO.getMondayTimeSlot()){
+            System.out.println("STRT TIME::: "+ slot.getStartTime());
+            System.out.println("END TIME:::: "+slot.getEndTime());
+        }
+        for(TimeSlot slot : availabilityDTO.getTuesdayTimeSlot()){
+            System.out.println("STRT TIME::: "+ slot.getStartTime());
+            System.out.println("END TIME:::: "+slot.getEndTime());
+        }
+        for(TimeSlot slot : availabilityDTO.getWednesdayTimeSlot()){
+            System.out.println("STRT TIME::: "+ slot.getStartTime());
+            System.out.println("END TIME:::: "+slot.getEndTime());
+        }
+        for(TimeSlot slot : availabilityDTO.getThursdayTimeSlot()){
+            System.out.println("STRT TIME::: "+ slot.getStartTime());
+            System.out.println("END TIME:::: "+slot.getEndTime());
+        }
+        for(TimeSlot slot : availabilityDTO.getFridayTimeSlot()){
+            System.out.println("STRT TIME::: "+ slot.getStartTime());
+            System.out.println("END TIME:::: "+slot.getEndTime());
+        }
+        for(TimeSlot slot : availabilityDTO.getSaturdayTimeSlot()){
+            System.out.println("STRT TIME::: "+ slot.getStartTime());
+            System.out.println("END TIME:::: "+slot.getEndTime());
+        }
+        for(TimeSlot slot : availabilityDTO.getSundayTimeSlot()){
             System.out.println("STRT TIME::: "+ slot.getStartTime());
             System.out.println("END TIME:::: "+slot.getEndTime());
         }

@@ -6,9 +6,11 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.nidhishah.meetingscheduler.dto.*;
 import org.nidhishah.meetingscheduler.entity.Organization;
 import org.nidhishah.meetingscheduler.entity.Role;
+import org.nidhishah.meetingscheduler.entity.TeamMemberAvailability;
 import org.nidhishah.meetingscheduler.entity.User;
 import org.nidhishah.meetingscheduler.repository.OrganizationRepository;
 //import org.nidhishah.meetingscheduler.repository.TeamMemberRepository;
+import org.nidhishah.meetingscheduler.repository.TeamMemberAvalibilityRepository;
 import org.nidhishah.meetingscheduler.repository.UserRepository;
 import org.nidhishah.meetingscheduler.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Lazy;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,18 +37,22 @@ public class TeamMemberServiceImpl implements TeamMemberService {
     private final OrganizationRepository organizationRepository;
     private BCryptPasswordEncoder encoder;
 
+    private TeamMemberAvalibilityRepository teamMemberAvalibilityRepository;
+
 
 
     @Autowired
     public TeamMemberServiceImpl(OrganizationService organizationService, RoleService roleService,
                                  ModelMapper modelMapper, UserRepository userRepository,
-                                 OrganizationRepository organizationRepository,@Lazy BCryptPasswordEncoder encoder) {
+                                 OrganizationRepository organizationRepository,@Lazy BCryptPasswordEncoder encoder,
+                                 TeamMemberAvalibilityRepository teamMemberAvalibilityRepository) {
         this.organizationService = organizationService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
         this.userRepository=userRepository;
         this.organizationRepository = organizationRepository;
         this.encoder =encoder;
+        this.teamMemberAvalibilityRepository = teamMemberAvalibilityRepository;
     }
 
     @Override
@@ -203,5 +210,60 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             }
         }
         return "";
+    }
+
+    ///////////////////// TEAM MEMBER AVAILABILITY SETUP FOR SETAVAILABILITY FORM /////
+    /*  If teammeber entry(check by id) in the availability - fetch availability
+    *    If no entry: create default timeslot of 9:00 am to 17:00(5:00 PM) for each day
+    *    at the end return the DTO
+     */
+    @Override
+    public DaysAvailabilityDTO getTeamMemberAvailability(String username, String organization) {
+        //empty dto
+        DaysAvailabilityDTO availabilityDTO = new DaysAvailabilityDTO();
+        // find teammember id from user by username and orgname
+        User user = userRepository.findByUsernameAndOrganizationOrgName(username,organization);
+        //Do user have availability setup?
+        TeamMemberAvailability teamMemberAvailability = teamMemberAvalibilityRepository.getByTeammember_Id(user.getId());
+        // Not Empty- Let's create dto with stored values - deserialize each day if present
+        if (teamMemberAvailability!= null)
+        {
+            availabilityDTO.setMondayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getMondayTimeSlot()));
+            availabilityDTO.setTuesdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getTuesdayTimeSlot()));
+            availabilityDTO.setWednesdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getWednesdayTimeSlot()));
+            availabilityDTO.setThursdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getThursdayTimeSlot()));
+            availabilityDTO.setFridayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getFridayTimeSlot()));
+            availabilityDTO.setSaturdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getSaturdayTimeSlot()));
+            availabilityDTO.setSundayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getSundayTimeSlot()));
+        }
+        // Empty- load default one
+        else
+        {
+            //create default timeslot
+            TimeSlot timeSlot = new TimeSlot(LocalTime.of(9,0),LocalTime.of(17,0));
+            List<TimeSlot> defaulttimeSlotList = new ArrayList<>();
+            defaulttimeSlotList.add(timeSlot);
+            availabilityDTO.setMondayTimeSlot(defaulttimeSlotList);
+            availabilityDTO.setTuesdayTimeSlot(defaulttimeSlotList);
+            availabilityDTO.setWednesdayTimeSlot(defaulttimeSlotList);
+            availabilityDTO.setThursdayTimeSlot(defaulttimeSlotList);
+            availabilityDTO.setFridayTimeSlot(defaulttimeSlotList);
+            availabilityDTO.setSaturdayTimeSlot(defaulttimeSlotList);
+            availabilityDTO.setSundayTimeSlot(defaulttimeSlotList);
+        }
+        return availabilityDTO;
+    }
+
+    private List<TimeSlot> deserializeDayTimeSlots(String dayTimeSlots){
+        TeamMemberAvailability teamavailibility = new TeamMemberAvailability();
+        //if deserialize throw exception, just put default one
+        try {
+            return teamavailibility.deserializeTimeSlots(dayTimeSlots);
+        }catch (Exception e){
+            TimeSlot defaultslot = new TimeSlot(LocalTime.of(9,0),LocalTime.of(17,0));
+            List<TimeSlot> defaultSlotList = new ArrayList<>();
+            defaultSlotList.add(defaultslot);
+            return defaultSlotList;
+        }
     }
 }

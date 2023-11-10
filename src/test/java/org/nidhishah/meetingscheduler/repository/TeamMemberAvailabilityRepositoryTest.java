@@ -35,7 +35,7 @@ public class TeamMemberAvailabilityRepositoryTest {
 
         // Create a list of timeslots
         TimeSlot timeSlot1 = new TimeSlot(LocalTime.of(9, 0), LocalTime.of(12, 0));
-        TimeSlot timeSlot2 = new TimeSlot(LocalTime.of(1, 0), LocalTime.of(4, 0));
+        TimeSlot timeSlot2 = new TimeSlot(LocalTime.of(13, 0), LocalTime.of(16, 0));
 
         List<TimeSlot> timeSlotList = new ArrayList<>();
         timeSlotList.add(timeSlot1);

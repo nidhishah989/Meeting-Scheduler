@@ -23,6 +23,18 @@ public class TeamMemberAvailability {
 
     private String mondayTimeSlot;
 
+    private String tuesdayTimeSlot;
+
+    private String wednesdayTimeSlot;
+
+    private String thursdayTimeSlot;
+
+    private String fridayTimeSlot;
+
+    private String saturdayTimeSlot;
+
+    private String sundayTimeSlot;
+
     public TeamMemberAvailability() {
     }
 
@@ -46,18 +58,66 @@ public class TeamMemberAvailability {
         this.mondayTimeSlot = mondayTimeSlot;
     }
 
+    public String getTuesdayTimeSlot() {
+        return tuesdayTimeSlot;
+    }
+
+    public void setTuesdayTimeSlot(String tuesdayTimeSlot) {
+        this.tuesdayTimeSlot = tuesdayTimeSlot;
+    }
+
+    public String getWednesdayTimeSlot() {
+        return wednesdayTimeSlot;
+    }
+
+    public void setWednesdayTimeSlot(String wednesdayTimeSlot) {
+        this.wednesdayTimeSlot = wednesdayTimeSlot;
+    }
+
+    public String getThursdayTimeSlot() {
+        return thursdayTimeSlot;
+    }
+
+    public void setThursdayTimeSlot(String thursdayTimeSlot) {
+        this.thursdayTimeSlot = thursdayTimeSlot;
+    }
+
+    public String getFridayTimeSlot() {
+        return fridayTimeSlot;
+    }
+
+    public void setFridayTimeSlot(String fridayTimeSlot) {
+        this.fridayTimeSlot = fridayTimeSlot;
+    }
+
+    public String getSaturdayTimeSlot() {
+        return saturdayTimeSlot;
+    }
+
+    public void setSaturdayTimeSlot(String saturdayTimeSlot) {
+        this.saturdayTimeSlot = saturdayTimeSlot;
+    }
+
+    public String getSundayTimeSlot() {
+        return sundayTimeSlot;
+    }
+
+    public void setSundayTimeSlot(String sundayTimeSlot) {
+        this.sundayTimeSlot = sundayTimeSlot;
+    }
+
     // Implement serialization and deserialization methods
     public String serializeTimeSlots(List<TimeSlot> timeSlots) throws JsonProcessingException {
         System.out.println("Serializing Timeslots");
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+//        objectMapper.registerModule(new JavaTimeModule());
         return objectMapper.writeValueAsString(timeSlots);
     }
 
     public List<TimeSlot> deserializeTimeSlots(String timeslotStr) throws IOException {
         System.out.println("DeSerializing Timeslots");
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+//        objectMapper.registerModule(new JavaTimeModule());
         return objectMapper.readValue(timeslotStr, new TypeReference<List<TimeSlot>>() {});
     }
 }

@@ -15,4 +15,7 @@ public interface TeamMemberService {
     public void registerNewTeamMember(NewOrgMemberDTO newOrgMemberDTO, String organization) throws Exception;
 
     public String completeUserSignUpProcess(SignUPDTO signUPDTO);
+
+    //set teammemberAvailability dto (dayAvailabilityDTO) with defaults timeslots for each day
+    public DaysAvailabilityDTO getTeamMemberAvailability(String username,String organization);
 }

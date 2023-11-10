@@ -10,12 +10,14 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class TimeSlot {
 
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private String startTime;
+    private String endTime;
 
-
+    public TimeSlot(LocalTime startTime, LocalTime endTime) {
+        this.startTime = startTime.toString();
+        this.endTime = endTime.toString();
+    }
 
 }
