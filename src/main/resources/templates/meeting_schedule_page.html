@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Meeting Schedule</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/meeting_schedule.css">
+</head>
+<body>
+<!---- NAVBAR ----->
+<nav class="navbar bg-body-tertiary navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">
+            <div class="d-flex align-items-center">
+                <img src="/assests/Meetsy_logo.png" alt="M" width="65">
+            </div>
+        </a>
+
+        <!-- Replace the toggle button with a user icon -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Use your custom user icon here -->
+            <i class="bi bi-person-fill" style="color: whitesmoke; border: none"></i>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <div class="navbar-nav">
+                <div class="d-flex pl-4 adminnav">
+                    <div class="d-flex align-items-center">
+                        <!-- Display the user icon on larger screens -->
+                        <span class="d-none d-lg-block"><i class="bi bi-person-fill pr-2"></i></span>
+                        <p class='px-2 mb-0' id="admin" th:text="${#authorization.getAuthentication().name}"></p>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="btn btn-primary">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<!---- FORM 1 - MEETING SETUP --->
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="card shadow text-align-center">
+            <div class="row text-center">
+                <h3 class="display-5 mt-3">Nidhi Shah</h3>
+                <h4> <span class="mr-1"><i class="bi bi-clock"></i></span> 30-Minute Meeting Schedule</h4>
+                <p class="instruction">Select your preferred date and time slot for the meeting.</p>
+            </div>
+            <div class="row">
+                <!-- Calender-->
+                <div class="col-md-6 offset-md-3 mt-3">
+                    <div class="calendar">
+                        <div class="calendar-header">
+                            <i class="bi bi-chevron-left ml-2" onclick="prevMonth()"></i>
+                            <h5 id="monthYear"></h5>
+                            <i class="bi bi-chevron-right mr-2" onclick="nextMonth()"></i>
+                        </div>
+                        <div class="calendar-body" id="calendarBody">
+                            <!-- Days of the week will be dynamically generated here -->
+                        </div>
+                        <div class="calendar-footer">
+
+                        </div>
+                    </div>
+                </div>
+                <!---THE FORM -->
+
+<!--                <div class="col-md-6 p-4 text-center display-none">-->
+<!--                    <form>-->
+<!--                        <div class="row">-->
+<!--                            <div class="form-group">-->
+<!--                                <label class="form-label" th:text="">Nidhi Shah TimeZone</label>-->
+<!--                                <input class="form-control border-none" th:text="TimeZone" readonly>-->
+<!--                            <div>-->
+<!--                            <div> Get this option selection while post the form in dto-->
+<!--                                Dropdown : Options for meeting Type: as if iszoommeeting is true, so that option-->
+<!--                                Dropdown : Options for meeting Type: as if onsitemeeting is true, so that option-->
+<!--                            </div>-->
+<!--                            <input hidden to store the selected date>-->
+<!--                            <div class="row"> Get the selected timeslot in back with value-->
+<!--                                if selectedday thymeleaf list not null-->
+<!--                                <div class="monday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
+<!--                                <div class="tuesday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
+<!--                                <div class="wednesday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
+<!--                                <div class="thursday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
+<!--                                <div class="friday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
+<!--                                <div class="saturday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
+<!--                                <div class="sunday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
+<!--                                else <div> show a message as : Nidhi Shah not available on Selected Day</div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                                <div>Submit button for form </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+                <div class="col-md-6 p-4 text-center d-none" id="formColumn">
+                    <form id="meetingForm">
+                        <div class="form-group">
+                            <label for="timeZone">Nidhi Shah TimeZone</label>
+                            <input class="form-control timezone_border" name="timeZone" id="timeZone" th:value="TimeZone" readonly>
+                        </div>
+                        <input type="hidden" name="selectedDate" id="selectedDate" th:value="selecteddate" />
+
+<!--                        &lt;!&ndash; Monday's time slots &ndash;&gt;-->
+<!--                        <div class="monday" th:if="${daysAvailabilityDTO != null and daysAvailabilityDTO.mondayTimeSlot != null}">-->
+<!--                            <ul>-->
+<!--                                <li th:each="timeSlot : ${daysAvailabilityDTO.mondayTimeSlot}">-->
+<!--                                    <button type="button" th:text="${timeSlot}" onclick="selectTimeSlot('Monday', this.innerText)" />-->
+<!--                                    <input type="hidden" name="selectedTimeSlot" value="${timeSlot}" />-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Tuesday's time slots &ndash;&gt;-->
+<!--                        <div class="tuesday" th:if="${daysAvailabilityDTO != null and daysAvailabilityDTO.tuesdayTimeSlot != null}">-->
+<!--                            <ul>-->
+<!--                                <li th:each="timeSlot : ${daysAvailabilityDTO.tuesdayTimeSlot}">-->
+<!--                                    <button type="button" th:text="${timeSlot}" onclick="selectTimeSlot('Tuesday', this.innerText)" />-->
+<!--                                    <input type="hidden" name="selectedTimeSlot" value="${timeSlot}" />-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Repeat the same structure for other days (Wednesday to Sunday) &ndash;&gt;-->
+<!--                        &lt;!&ndash; ... &ndash;&gt;-->
+
+                        <button type="submit" class="btn btn-primary">Schedule Meeting</button>
+                    </form>
+                </div>
+                <!----END OF FORM ----->
+            </div>
+        </div>
+    </div>
+</div>
+<!----------- --------------------->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script src="/js/meeting_schedule_page.js"></script>
+
+</body>
+</html>

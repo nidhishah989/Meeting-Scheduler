@@ -106,4 +106,10 @@ public class ClientController {
         }
     }
 
+    @GetMapping("setup-meeting")
+    public String getMeetingScheduleForm2(){
+        //get id of the teammember and return a page with list of meeting windows for each day..
+        return "meeting_schedule_page";
+    }
+
 }
