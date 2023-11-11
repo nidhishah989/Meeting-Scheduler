@@ -16,6 +16,7 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
 
+    public User getUsersById(Long id);
     public User findByUsernameAndOrganizationOrgName(String username, String orgName);
 
     @Query("select u from User u where u.email=:email and u.organization.id = " +

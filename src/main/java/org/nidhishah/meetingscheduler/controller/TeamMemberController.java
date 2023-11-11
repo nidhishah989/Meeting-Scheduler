@@ -1,5 +1,6 @@
 package org.nidhishah.meetingscheduler.controller;
 
+import jakarta.validation.constraints.Null;
 import org.nidhishah.meetingscheduler.dto.DaysAvailabilityDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
@@ -88,7 +89,7 @@ public class TeamMemberController {
                 teamMemberDTO.setOrgName(userPrincipal.getOrganizationName());
                 // if teammember have the availability get them or get default one
                 DaysAvailabilityDTO availabilityDTO = teamMemberService.getTeamMemberAvailability(userPrincipal.getUsername(),userPrincipal.getOrganizationName());
-                System.out.println("Sunday end time: "+ availabilityDTO.getSundayTimeSlot().get(0).getEndTime());
+//                System.out.println("Sunday end time: "+ availabilityDTO.getSundayTimeSlot().get(0).getEndTime());
                 //teammemberdto for getting meeting time, meeting type. zoomlink thing
                 model.addAttribute("teammeber",teamMemberDTO);
                 model.addAttribute("daysavail",availabilityDTO);
@@ -96,50 +97,52 @@ public class TeamMemberController {
             }
             else{throw new Exception();}
         }catch (Exception e){
-
+            e.printStackTrace();
             return "login";
         }
     }
 
     @PostMapping("/saveavailability")
-    public void setTeamMemberAvailability(@ModelAttribute(name="teammeber") TeamMemberDTO teamMemberDTO,
-                                          @ModelAttribute(name="daysavail") DaysAvailabilityDTO availabilityDTO){
-        System.out.println("::::Set Availability for Team MEmber::::::");
-        System.out.println("ORg name:: "+teamMemberDTO.getOrgName());
-        System.out.println("meeting Window::" + teamMemberDTO.getMeetingWindow());
-        System.out.println("timezone :: "+teamMemberDTO.getTimeZone());
-        System.out.println("zoommeetingLink ::"+ teamMemberDTO.getZoomMeetingLink());
-        System.out.println("zoom meeting setup? ::" + teamMemberDTO.isZoomMeetingAvailable());
-        System.out.println("onsitemeeting setup? :: "+teamMemberDTO.isOnSiteMeetingAvailable());
-        System.out.println("::::Availability for Team MEmber::::::");
-        System.out.println("MONDAY TIMESLOTS NUMBER::: "+availabilityDTO.getMondayTimeSlot().size());
-        for(TimeSlot slot : availabilityDTO.getMondayTimeSlot()){
-            System.out.println("STRT TIME::: "+ slot.getStartTime());
-            System.out.println("END TIME:::: "+slot.getEndTime());
+    public String setTeamMemberAvailability(@ModelAttribute(name="teammeber") TeamMemberDTO teamMemberDTO,
+                                          @ModelAttribute(name="daysavail") DaysAvailabilityDTO availabilityDTO) {
+        try {
+            //////////////////////////////////////////////////////////////////////////////////
+            System.out.println("::::Set Availability for Team MEmber::::::");
+            System.out.println("ORg name:: " + teamMemberDTO.getOrgName());
+            System.out.println("meeting Window::" + teamMemberDTO.getMeetingWindow());
+            System.out.println("timezone :: " + teamMemberDTO.getTimeZone());
+            System.out.println("zoommeetingLink ::" + teamMemberDTO.getZoomMeetingLink());
+            System.out.println("zoom meeting setup? ::" + teamMemberDTO.isZoomMeetingAvailable());
+            System.out.println("onsitemeeting setup? :: " + teamMemberDTO.isOnSiteMeetingAvailable());
+            System.out.println("::::Availability for Team MEmber::::::");
+//
+            //get authenticated user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+                //organization information collection
+                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                //now get the user id
+                Long userid = userPrincipal.getUserId();
+                //Now save updated or new availability
+                Boolean successSetup = teamMemberService.setTeamMemberAvailability(userid, teamMemberDTO, availabilityDTO);
+                System.out.println("CONTROLLER RECEIVE SUCESSSETUP: "+ successSetup);
+                if (successSetup) {
+                    String role = userPrincipal.getAuthorities().isEmpty() ? "" : userPrincipal.getAuthorities().iterator().next().getAuthority();
+                    if (role.equals("admin")) {
+                        return "redirect:/adm_dashboard";
+                    } else if (role.equals("teammember")) {
+                        return "teammember_page";
+                    }
+                } else {
+                    throw new Exception();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("UNSUCESSFUL SETUP");
+            //return the availability form again with message
         }
-        for(TimeSlot slot : availabilityDTO.getTuesdayTimeSlot()){
-            System.out.println("STRT TIME::: "+ slot.getStartTime());
-            System.out.println("END TIME:::: "+slot.getEndTime());
-        }
-        for(TimeSlot slot : availabilityDTO.getWednesdayTimeSlot()){
-            System.out.println("STRT TIME::: "+ slot.getStartTime());
-            System.out.println("END TIME:::: "+slot.getEndTime());
-        }
-        for(TimeSlot slot : availabilityDTO.getThursdayTimeSlot()){
-            System.out.println("STRT TIME::: "+ slot.getStartTime());
-            System.out.println("END TIME:::: "+slot.getEndTime());
-        }
-        for(TimeSlot slot : availabilityDTO.getFridayTimeSlot()){
-            System.out.println("STRT TIME::: "+ slot.getStartTime());
-            System.out.println("END TIME:::: "+slot.getEndTime());
-        }
-        for(TimeSlot slot : availabilityDTO.getSaturdayTimeSlot()){
-            System.out.println("STRT TIME::: "+ slot.getStartTime());
-            System.out.println("END TIME:::: "+slot.getEndTime());
-        }
-        for(TimeSlot slot : availabilityDTO.getSundayTimeSlot()){
-            System.out.println("STRT TIME::: "+ slot.getStartTime());
-            System.out.println("END TIME:::: "+slot.getEndTime());
-        }
+        return "redirect:/availability_setup";
     }
 }

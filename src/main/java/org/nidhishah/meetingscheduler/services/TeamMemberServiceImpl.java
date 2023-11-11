@@ -4,13 +4,11 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.nidhishah.meetingscheduler.dto.*;
-import org.nidhishah.meetingscheduler.entity.Organization;
-import org.nidhishah.meetingscheduler.entity.Role;
-import org.nidhishah.meetingscheduler.entity.TeamMemberAvailability;
-import org.nidhishah.meetingscheduler.entity.User;
+import org.nidhishah.meetingscheduler.entity.*;
 import org.nidhishah.meetingscheduler.repository.OrganizationRepository;
 //import org.nidhishah.meetingscheduler.repository.TeamMemberRepository;
 import org.nidhishah.meetingscheduler.repository.TeamMemberAvalibilityRepository;
+import org.nidhishah.meetingscheduler.repository.TeamMemberExtraInfoRepository;
 import org.nidhishah.meetingscheduler.repository.UserRepository;
 import org.nidhishah.meetingscheduler.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +36,7 @@ public class TeamMemberServiceImpl implements TeamMemberService {
     private BCryptPasswordEncoder encoder;
 
     private TeamMemberAvalibilityRepository teamMemberAvalibilityRepository;
+    private TeamMemberExtraInfoRepository teamMemberExtraInfoRepository;
 
 
 
@@ -45,7 +44,8 @@ public class TeamMemberServiceImpl implements TeamMemberService {
     public TeamMemberServiceImpl(OrganizationService organizationService, RoleService roleService,
                                  ModelMapper modelMapper, UserRepository userRepository,
                                  OrganizationRepository organizationRepository,@Lazy BCryptPasswordEncoder encoder,
-                                 TeamMemberAvalibilityRepository teamMemberAvalibilityRepository) {
+                                 TeamMemberAvalibilityRepository teamMemberAvalibilityRepository,
+                                 TeamMemberExtraInfoRepository teamMemberExtraInfoRepository) {
         this.organizationService = organizationService;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
@@ -53,6 +53,7 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         this.organizationRepository = organizationRepository;
         this.encoder =encoder;
         this.teamMemberAvalibilityRepository = teamMemberAvalibilityRepository;
+        this.teamMemberExtraInfoRepository= teamMemberExtraInfoRepository;
     }
 
     @Override
@@ -224,7 +225,7 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         // find teammember id from user by username and orgname
         User user = userRepository.findByUsernameAndOrganizationOrgName(username,organization);
         //Do user have availability setup?
-        TeamMemberAvailability teamMemberAvailability = teamMemberAvalibilityRepository.getByTeammember_Id(user.getId());
+        TeamMemberAvailability teamMemberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
         // Not Empty- Let's create dto with stored values - deserialize each day if present
         if (teamMemberAvailability!= null)
         {
@@ -254,6 +255,90 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         return availabilityDTO;
     }
 
+    /// Save or Update Team Member Availability
+    /****************************
+    * Check userid present in availability table
+     * If yes, get that, and update days availability based on user's input
+     * If no, create new, add all days availability based on user's input
+     * Save the availability
+     * return true-> if success, either return false
+    * **********************************/
+    @Override
+    public boolean setTeamMemberAvailability(Long id, TeamMemberDTO teamMemberDTO, DaysAvailabilityDTO daysAvailabilityDTO) {
+        try{
+            System.out.println("IN MEETING AVAILABILITY SETUP");
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            System.out.println("CurrentUserID: "+ id);
+            // first let's get user from user
+            User currentuser= userRepository.getUsersById(id);
+            System.out.println("found user by id, username: "+ currentuser.getUsername());
+            //let's check teammemberextrainfo present or not
+            TeamMemberExtraInfo memberExtraInfo = teamMemberExtraInfoRepository.getTeamMemberExtraInfoByUser_Id(id);
+            //update it
+            if(memberExtraInfo !=null){
+                System.out.println("Teammember extra info need to update:");
+                memberExtraInfo.setMeetingWindow(teamMemberDTO.getMeetingWindow());
+                memberExtraInfo.setTimeZone(teamMemberDTO.getTimeZone());
+                memberExtraInfo.setOnSiteMeetingAvailable(teamMemberDTO.isOnSiteMeetingAvailable());
+                memberExtraInfo.setZoomMeetingAvailable(teamMemberDTO.isZoomMeetingAvailable());
+                memberExtraInfo.setZoomMeetingLink(teamMemberDTO.getZoomMeetingLink());
+                teamMemberExtraInfoRepository.save(memberExtraInfo);
+                System.out.println("Teammember extra info updated:");
+            }
+            //make new entry
+            else{
+                System.out.println("Teammember extra info need to setup:");
+                TeamMemberExtraInfo teamMemberExtraInfo = modelMapper.map(teamMemberDTO,TeamMemberExtraInfo.class);
+                teamMemberExtraInfo.setUser(currentuser);
+//                teamMemberExtraInfo.setMeetingWindow(teamMemberDTO.getMeetingWindow());
+//                teamMemberExtraInfo.setTimeZone(teamMemberDTO.getTimeZone());
+//                teamMemberExtraInfo.setOnSiteMeetingAvailable(teamMemberDTO.isOnSiteMeetingAvailable());
+//                teamMemberExtraInfo.setZoomMeetingAvailable(teamMemberDTO.isZoomMeetingAvailable());
+//                teamMemberExtraInfo.setZoomMeetingLink(teamMemberDTO.getZoomMeetingLink());
+                teamMemberExtraInfoRepository.save(teamMemberExtraInfo);
+                System.out.println("Teammember extra info setup done:");
+            }
+            // let's check user availability present or not
+            TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(id);
+            //the availability have already seted up
+            if(memberAvailability!= null){
+                System.out.println("member availability need to update:");
+                //first serialize list and get string for each day
+                memberAvailability.setMondayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getMondayTimeSlot()));
+                memberAvailability.setTuesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getTuesdayTimeSlot()));
+                memberAvailability.setWednesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getWednesdayTimeSlot()));
+                memberAvailability.setThursdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getThursdayTimeSlot()));
+                memberAvailability.setFridayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getFridayTimeSlot()));
+                memberAvailability.setSaturdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSaturdayTimeSlot()));
+                memberAvailability.setSundayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSundayTimeSlot()));
+                teamMemberAvalibilityRepository.save(memberAvailability);
+                System.out.println("member availability updated:");
+            }
+            //the availability has not set up yet
+            else{
+                System.out.println("member availability set up new needed:");
+                    TeamMemberAvailability teamMemberAvailability = new TeamMemberAvailability();
+                    teamMemberAvailability.setTeammember(currentuser);
+                    teamMemberAvailability.setMondayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getMondayTimeSlot()));
+                    teamMemberAvailability.setTuesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getTuesdayTimeSlot()));
+                    teamMemberAvailability.setWednesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getWednesdayTimeSlot()));
+                    teamMemberAvailability.setThursdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getThursdayTimeSlot()));
+                    teamMemberAvailability.setFridayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getFridayTimeSlot()));
+                    teamMemberAvailability.setSaturdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSaturdayTimeSlot()));
+                    teamMemberAvailability.setSundayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSundayTimeSlot()));
+                    teamMemberAvalibilityRepository.save(teamMemberAvailability);
+                System.out.println("member availability set up new done");
+            }
+            System.out.println("$$$$$$ User Availability Setup successfully done.");
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println("$$$$$$ ERROR: User Availability Setup unsuccessful");
+        return false;
+    }
     private List<TimeSlot> deserializeDayTimeSlots(String dayTimeSlots){
         TeamMemberAvailability teamavailibility = new TeamMemberAvailability();
         //if deserialize throw exception, just put default one
@@ -266,4 +351,17 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             return defaultSlotList;
         }
     }
+
+    private String serializeDayTimeSlots(List<TimeSlot> timeSlotList){
+        TeamMemberAvailability teamavailibility = new TeamMemberAvailability();
+        //if serialize throw exception,just put null
+        try {
+            return teamavailibility.serializeTimeSlots(timeSlotList);
+        }catch (Exception e){
+            System.out.println("serialize get wrong.");
+            return null;
+        }
+    }
+
+
 }

@@ -18,4 +18,6 @@ public interface TeamMemberService {
 
     //set teammemberAvailability dto (dayAvailabilityDTO) with defaults timeslots for each day
     public DaysAvailabilityDTO getTeamMemberAvailability(String username,String organization);
+
+    public boolean setTeamMemberAvailability(Long id, TeamMemberDTO teamMemberDTO, DaysAvailabilityDTO daysAvailabilityDTO);
 }

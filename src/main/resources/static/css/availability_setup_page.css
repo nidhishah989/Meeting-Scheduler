@@ -16,3 +16,10 @@ body {
     color: whitesmoke;
 
 }
+
+.card-header{
+  justify-content: space-between;
+  background:#315a70;
+  color: white;
+  align-items: center;
+}

@@ -64,4 +64,9 @@ public class UserPrincipal implements UserDetails {
     public String getOrganizationName(){
         return userOrganizationName;
     }
+
+    public Long getUserId(){
+        return  this.user.getId();
+    }
+
 }

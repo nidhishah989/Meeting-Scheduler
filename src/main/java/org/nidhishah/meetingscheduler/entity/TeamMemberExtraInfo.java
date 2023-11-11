@@ -14,7 +14,7 @@ public class TeamMemberExtraInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     private User user;
     private String meetingWindow;
     private boolean zoomMeetingAvailable;

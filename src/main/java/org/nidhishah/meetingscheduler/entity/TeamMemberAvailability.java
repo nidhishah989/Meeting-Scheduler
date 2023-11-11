@@ -18,7 +18,7 @@ public class TeamMemberAvailability {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne(targetEntity = User.class,fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = User.class,fetch = FetchType.LAZY)
     private User teammember;
 
     private String mondayTimeSlot;

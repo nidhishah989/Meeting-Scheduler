@@ -74,9 +74,9 @@ $(document).ready(function () {
         var newRow = $('<div class="row d-flex day-content" data-day-section="' + day + '"></div>');
 
         // Append the columns to the new row
-        newRow.append('<div class="col-md-6">' +
+        newRow.append('<div class="col-5">' +
             '<div class="input-group date bootstrap-timepicker">' +
-            '<input type="text" class="form-control timePicker" name="mondayTimeSlot[' + index + '].startTime">' +
+            '<input type="text" class="form-control timePicker" id="'+day+'TimeSlot'+index+'.startTime" name= "'+day+'TimeSlot[' + index + '].startTime" required> ' +
             '<span class="input-group-addon">' +
             '<span class="input-group-text bg-white">' +
             '<i class="bi bi-clock" aria-hidden="true"></i>' +
@@ -85,9 +85,9 @@ $(document).ready(function () {
             '</div>' +
             '</div>');
 
-        newRow.append('<div class="col-md-6">' +
-            '<div class="input-group date bootstrap-timepicker" id="monday-end-time-' + index + '">' +
-            '<input type="text" class="form-control timePicker" name="mondayTimeSlot[' + index + '].endTime">' +
+        newRow.append('<div class="col-5">' +
+            '<div class="input-group date bootstrap-timepicker" id="'+day+'-end-time-' + index + '">' +
+            '<input type="text" class="form-control timePicker" id="'+day+'TimeSlot'+index+'.endTime" name="'+day+'TimeSlot[' + index + '].endTime" required>' +
             '<span class="input-group-addon">' +
             '<span class="input-group-text bg-white">' +
             '<i class="bi bi-clock" aria-hidden="true"></i>' +
@@ -95,7 +95,9 @@ $(document).ready(function () {
             '</span>' +
             '</div>' +
             '</div>');
-
+        newRow.append('<div class="col-1">'+
+                      ' <button type="button" class="btn btn-danger timeslotCancel">X</button>'+
+                      '</div>');
         // Append the new row under the card-body
         cardBody.append(newRow);
 
@@ -106,6 +108,35 @@ $(document).ready(function () {
         });
     });
 });
+
+//cancel timeslot
+$(document).ready(function () {
+    $('body').on('click', '.timeslotCancel', function() {
+        $(this).closest('.day-content').remove();
+    });
+});
+
+// $(document).ready(function () {
+//     $('.bootstrap-timepicker').on('change',function (){
+//         console.log("changed time");
+//         console.log($(this).val())
+//     });
+//     $('.day-container').on('input', '.bootstrap-timepicker:last', function () {
+//         const endTimeStr = $(this).val();
+//         const startTimeStr = $(this).closest('.day-content').find('.bootstrap-timepicker:first').val();
+//
+//         const startTime = new Date(`2000-01-01T${startTimeStr}`);
+//         const endTime = new Date(`2000-01-01T${endTimeStr}`);
+//
+//         if (!isNaN(startTime) && !isNaN(endTime) && startTime > endTime) {
+//             alert('End time cannot be earlier than start time');
+//             $(this).val('');
+//         }
+//     });
+// });
+
+
+
 
 
 

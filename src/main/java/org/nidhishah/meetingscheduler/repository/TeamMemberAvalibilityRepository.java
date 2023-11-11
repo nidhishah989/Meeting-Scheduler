@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeamMemberAvalibilityRepository extends JpaRepository<TeamMemberAvailability,Long> {
 
-    public TeamMemberAvailability getByTeammember_Id(Long teammemberid);
+    public TeamMemberAvailability getTeamMemberAvailabilityByTeammember_Id(Long teammemberid);
 }
