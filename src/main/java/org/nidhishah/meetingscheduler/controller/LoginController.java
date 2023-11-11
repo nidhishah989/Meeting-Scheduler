@@ -87,7 +87,7 @@ public class LoginController {
                             return "redirect:/availability_setup";
                         } else if (roleName.equals("client")) {
                             //redirect for meeting schedule page
-                            return "file";
+                            return "redirect:/meeting_schedule";
                         }
                     }
                 }
@@ -138,7 +138,7 @@ public class LoginController {
                 }
                 //if client - open client page
                 else if (role.equals("client")) {
-                    return "client_page";
+                    return "redirect:/meeting_schedule";
                 }
             }
 

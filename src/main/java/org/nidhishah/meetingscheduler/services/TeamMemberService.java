@@ -20,4 +20,6 @@ public interface TeamMemberService {
     public DaysAvailabilityDTO getTeamMemberAvailability(String username,String organization);
 
     public boolean setTeamMemberAvailability(Long id, TeamMemberDTO teamMemberDTO, DaysAvailabilityDTO daysAvailabilityDTO);
+
+    public List<TeamMemberDTO> getAvailableTeamMembersForMeetingSchedule(String organization);
 }

@@ -44,6 +44,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/", "/orgsetup","/orgsetupprocess","/login","/signup","/css/**","/js/**","assests/**").permitAll() //this will allow any user to access these two pages
                                 .requestMatchers("/setorgdetail/**","/process-orgdetailsetup","/adm_dashboard","/addteammember","/addclient").hasAuthority("admin")
                                 .requestMatchers("/availability_setup").hasAnyAuthority("admin","teammember")
+                                .requestMatchers("/meeting_schedule").hasAnyAuthority("client")
                         .anyRequest().authenticated() //this will make sure to authenticate user for other pages
 
                 )

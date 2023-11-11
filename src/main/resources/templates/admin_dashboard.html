@@ -41,6 +41,9 @@
                         <!-- Display the user icon on larger screens -->
                         <span class="d-none d-lg-block"><i class="bi bi-person-fill pr-2"></i></span>
                         <p class='px-2 mb-0' id="admin" th:text="${#authorization.getAuthentication().name}"></p>
+                        <form th:action="@{/availability_setup}">
+                            <button type="submit" class="btn btn-primary">Update Availability</button>
+                        </form>
                         <form th:action="@{/logout}" method="post">
                             <button type="submit" class="btn btn-primary">Logout</button>
                         </form>

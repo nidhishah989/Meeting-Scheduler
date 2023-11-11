@@ -1,10 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Client Meeting setup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/client_page.css">
 </head>
 <body>
-   <h1> Page for client to set the meeting</h1>
+ <!---- NAVBAR ----->
+ <nav class="navbar bg-body-tertiary navbar-expand-lg">
+     <div class="container-fluid">
+         <a class="navbar-brand" th:href="@{/}">
+             <div class="d-flex align-items-center">
+                 <img src="/assests/Meetsy_logo.png" alt="M" width="65">
+             </div>
+         </a>
+
+         <!-- Replace the toggle button with a user icon -->
+         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+             <!-- Use your custom user icon here -->
+             <i class="bi bi-person-fill" style="color: whitesmoke; border: none"></i>
+         </button>
+
+         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+             <div class="navbar-nav">
+                 <div class="d-flex pl-4 adminnav">
+                     <div class="d-flex align-items-center">
+                         <!-- Display the user icon on larger screens -->
+                         <span class="d-none d-lg-block"><i class="bi bi-person-fill pr-2"></i></span>
+                         <p class='px-2 mb-0' id="admin" th:text="${#authorization.getAuthentication().name}"></p>
+                         <form th:action="@{/logout}" method="post">
+                             <button type="submit" class="btn btn-primary">Logout</button>
+                         </form>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+ </nav>
+ <!---- FORM 1 - MEETING SETUP --->
+ <div class="container mt-5">
+
+     <div class="row justify-content-center">
+
+             <div class="card shadow text-align-center">
+                 <div class="row">
+                     <!-- MESSAGE-->
+                     <div class="col-md-6 gradient-custom-2 text-center">
+                          <div class="text-white px-3 py-4 p-md-3 mx-md-2 text-center w-100">
+                              <h4 class="large">Scheduling made easy!</h4>
+                              <p> Start setting up your next meeting hassle-free!</p>
+                          </div>
+                     </div>
+                     <!---THE FORM -->
+                     <div class="col-md-6 p-4 text-center">
+                         <h2 class="mb-3">Set Up a Meeting</h2>
+                         <form class="px-3" th:action="@{/setup-meeting}" method="post" th:if="${teamembers.size()>0}">
+                             <div class="form-group">
+                                 <label class="form-label mb-3" for="teamMember" th:text="'With whom from '+${organization}+' organization you want to do the meeting?'"></label>
+                                 <select class="form-control mb-3" id="teamMember" name="selectedTeamMember">
+                                     <option value="">Select a team member</option>
+                                     <th:block th:each="member : ${teamembers}">
+                                         <option th:value="${member.id}" th:text="${member.firstName + ' ' + member.lastName}"></option>
+                                     </th:block>
+                                 </select>
+                             </div>
+                             <button type="submit" class="btn btn-primary mb-3 meetingsetup">Set Up Meeting</button>
+                         </form>
+
+                         <p th:if="${teamembers.size() == 0}" class="text-danger mt-3">Sorry! Currently, no one from
+                             <span th:text="${organization}"></span> organization is available for a meeting. Try again later!</p>
+                     </div>
+                 </div>
+             </div>
+     </div>
+ </div>
+
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+         crossorigin="anonymous"></script>
 </body>
 </html>

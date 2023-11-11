@@ -104,7 +104,7 @@ public class OrganizationController {
                 System.out.println("In Controller: "+organizationDTO.getOrgName());
                 if(organizationService.setOrganizationDetail(organizationDTO)){
                     // update is done - give admin a new page for setting availability
-                    return "redirect:/adm_dashboard";
+                    return "redirect:/availability_setup";
 
                 }
                 else{

@@ -10,6 +10,7 @@ import lombok.Setter;
 public class TeamMemberDTO {
 //    private Long id;
 //    private String username;
+    private Long id;
     private String firstName;
     private String lastName;
 //    private String email;

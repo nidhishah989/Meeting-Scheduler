@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.modelmapper.TypeMap;
 
@@ -339,6 +336,53 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         System.out.println("$$$$$$ ERROR: User Availability Setup unsuccessful");
         return false;
     }
+
+    /*****************************
+    * This service will provide all available team members from given organization
+     * isenable =true, and entry in availability table
+    * */
+    @Override
+    public List<TeamMemberDTO> getAvailableTeamMembersForMeetingSchedule(String organization) {
+        List<Object[]> teamMembersList =userRepository.findUsersByOrganizationNameAndRole(organization);
+        System.out.println(organization + " have total "+teamMembersList.size() + " Team Members.");
+        //now add only those team member if is enable and if enable-
+        // and have atleast one meeting type available and availability present
+        List<TeamMemberDTO> availableMemberList = new ArrayList<>();
+        Iterator<Object[]> iterator = teamMembersList.iterator();
+        while (iterator.hasNext()) {
+            Object[] memberObject = iterator.next();
+            boolean isMemberEnabled = (boolean) memberObject[memberObject.length - 1];
+            System.out.println(memberObject[0] + " " + memberObject[1] + " is enable? "+ isMemberEnabled);
+            //member is enable
+            if (isMemberEnabled) {
+                //now get the id and try to find - any meeting type is on?
+                Long memberid = (Long) memberObject[memberObject.length -2];
+                System.out.println(memberObject[0] + " " + memberObject[1] + " ID: ? "+ memberid);
+                //get meetingtype from user's id
+                TeamMemberExtraInfo memberExtraInfo = teamMemberExtraInfoRepository.getTeamMemberExtraInfoByUser_Id(memberid);
+                if(memberExtraInfo.isOnSiteMeetingAvailable() || memberExtraInfo.isZoomMeetingAvailable()){
+                    //get teammemberavailability entry
+                    TeamMemberAvailability teamMemberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(memberid);
+                    Boolean isMemberAvailabilityPresent = (teamMemberAvailability != null) ? true : false;
+                    System.out.println(memberObject[0] + " " + memberObject[1] + " has availability setup? "+ isMemberAvailabilityPresent);
+                    if(isMemberAvailabilityPresent){
+                        //good to go, add member firstname and lastname and id to teammemberDTO
+                        TeamMemberDTO availablemember = new TeamMemberDTO();
+                        availablemember.setFirstName((String) memberObject[0]);
+                        availablemember.setLastName((String) memberObject[1]);
+                        availablemember.setId(memberid);
+                        availableMemberList.add(availablemember);
+                        System.out.println(Arrays.toString(availableMemberList.stream().toArray()));
+
+                    }
+                }
+
+            }
+        }
+
+        return availableMemberList;
+    }
+
     private List<TimeSlot> deserializeDayTimeSlots(String dayTimeSlots){
         TeamMemberAvailability teamavailibility = new TeamMemberAvailability();
         //if deserialize throw exception, just put default one

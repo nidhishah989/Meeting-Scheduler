@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 //    public List<User> getUsersByOrganizationAndRole(Organization organization, List<Role> roles);
 
     /// ///// This does not work......
-    @Query(value = "SELECT u.firstName, u.lastName, r.roleName, o.orgName " +
+    @Query(value = "SELECT u.firstName, u.lastName, r.roleName, o.orgName ,u.id, u.isEnabled " +
             "FROM User u " +
             "JOIN Role r ON u.role.id = r.id " +
             "JOIN Organization o ON u.organization.id = o.id " +
@@ -51,4 +51,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "WHERE o.orgName = :organizationName " +
             "AND r.roleName ='client'")
     List<ClientDTO> getUsersByOrgNameAndRole(@Param("organizationName") String organizationName);
+
+
 }

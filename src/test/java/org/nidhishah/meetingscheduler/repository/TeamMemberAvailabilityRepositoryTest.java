@@ -89,7 +89,7 @@ public class TeamMemberAvailabilityRepositoryTest {
         User user = userRepository.findByUsernameAndOrganizationOrgName("nidhishah989","meetsy");
 
         // now check if the teammember availability entry have been done or not
-        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getByTeammember_Id(user.getId());
+        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
 
         Assertions.assertNotNull(memberAvailability);
     }
@@ -103,7 +103,7 @@ public class TeamMemberAvailabilityRepositoryTest {
         User user = userRepository.findByUsernameAndOrganizationOrgName("nidhishah989","meetsy");
 
         // now check if the teammember availability entry have been done or not
-        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getByTeammember_Id(user.getId());
+        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
 
         Assertions.assertNotNull(memberAvailability);
 
@@ -134,7 +134,7 @@ public class TeamMemberAvailabilityRepositoryTest {
         User user = userRepository.findByUsernameAndOrganizationOrgName("nidhishah989","meetsy");
 
         // now check if the teammember availability entry have been done or not
-        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getByTeammember_Id(user.getId());
+        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
 
         if(memberAvailability!= null){
             try {
@@ -148,7 +148,7 @@ public class TeamMemberAvailabilityRepositoryTest {
                 memberAvailability.setMondayTimeSlot(mondayTimeSlotStr);
                 teamMemberAvalibilityRepository.save(memberAvailability);
                 // now retreive again and check size is less than previous one
-                TeamMemberAvailability updatedAvailability = teamMemberAvalibilityRepository.getByTeammember_Id(user.getId());
+                TeamMemberAvailability updatedAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
                 //serialize Mondayslots and check size
                 List<TimeSlot> updatedMondaySlots = updatedAvailability.deserializeTimeSlots(updatedAvailability.getMondayTimeSlot());
                 Assertions.assertEquals(previoussize-1,updatedMondaySlots.size());
