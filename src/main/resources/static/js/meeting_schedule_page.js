@@ -2,6 +2,7 @@ const calendarBody = document.getElementById('calendarBody');
 const currentDate = new Date();
 let currentMonth = currentDate.getMonth();
 let currentYear = currentDate.getFullYear();
+let previousday ="";
 
 function generateCalendar() {
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -57,8 +58,10 @@ function updateMonthYear() {
 }
 
 function selectTimeSlot(day, timeSlot) {
+    console.log(day)
     console.log(timeSlot)
     document.getElementById('selectedTimeSlot').value = timeSlot; // Set the selected time zone
+    document.getElementById('selectedDay').value = day;
 }
 
 function setSelectedDate(day) {
@@ -72,20 +75,31 @@ function setSelectedDate(day) {
 
     console.log(formattedDate); // MM/DD/YYYY format
     console.log(dayInFullText); // Full day name (e.g., Monday, Tuesday)
+    //display side form by removing d-none
     const form = document.getElementById("formColumn");
     form.classList.remove("d-none");
+    // in side form- date change as per selection
     const selectedDate = document.getElementById("selectedDate");
     selectedDate.value = formattedDate;
     const calendercolumn = document.getElementById("calenderside");
     // Get the screen width
     const mediaQuery = window.matchMedia('(max-width: 767px)');
-
     if (mediaQuery.matches) {
         // Mobile size or smaller
         calendercolumn.style.display = "none"; // Hide the calenderside for mobile
     } else {
         document.getElementById("calenderside").classList.remove("offset-md-3");
     }
+    // show the day timeslots as per selection
+    const timeslotblock = document.getElementById(dayInFullText)
+    console.log("previous day: "+ previousday)
+    if (previousday != ""){
+        console.log("changing the day..")
+        const previoustimeSlotblock = document.getElementById(previousday)
+        previoustimeSlotblock.classList.add("d-none")
+    }
+    timeslotblock.classList.remove("d-none")
+    previousday=dayInFullText;
 
 
 }
@@ -100,7 +114,7 @@ function checkForm(event) {
     if (meetingType !== "OnSite" && meetingType !== "Zoom") {
         alert("Please select a Meeting Type.");
         return false;
-    } else if (selectedTimeSlot === "timeSlot") {
+    } else if (selectedTimeSlot === "timeSlot" && selectedDay ==="day") {
         alert("Please select a meeting Window to schedule meeting.");
         return false;
     } else if (selectedDate === "") {

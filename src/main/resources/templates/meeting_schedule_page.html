@@ -96,9 +96,11 @@
                                 </div>
                                 <!---SELECTED TIMESLOT -->
                                 <input type="hidden" name="selectedTimeSlot" id="selectedTimeSlot" value="timeSlot">
+                                <input type="hidden" name="selectedDay" id="selectedDay" value="day">
                                 <!------------------------>
                                 <!--EACH DAY AVAILABILITY LIST DISPLAY-->
-                                <div class="Monday day-list form-group row" >
+                                <!----- MONDAY --->
+                                <div id ="Monday" class="day-list form-group row d-none" >
                                     <!-- for label -->
                                     <div class="justify-content-center align-content-center cardLabel px-4">
                                         <label>Meeting Windows: </label>
@@ -111,6 +113,108 @@
                                         </ul>
                                         <div th:if="${daysavail.mondayTimeSlot.isEmpty()}">
                                             <p>No available timeslots for Monday.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!----- Tuesday --->
+                                <div id ="Tuesday" class="day-list form-group row d-none" >
+                                    <!-- for label -->
+                                    <div class="justify-content-center align-content-center cardLabel px-4">
+                                        <label>Meeting Windows: </label>
+                                    </div>
+                                    <div class="scrollable-container" >
+                                        <ul class="timeslotList" th:if="${!daysavail.tuesdayTimeSlot.isEmpty()}">
+                                            <li th:each="timeSlot : ${daysavail.tuesdayTimeSlot}">
+                                                <button class="btn btn-outline-primary btn-block m-1" type="button" th:text="${timeSlot.startTime}+'-'+${timeSlot.endTime}" onclick="selectTimeSlot('Tuesday', this.innerText)"></button>
+                                            </li>
+                                        </ul>
+                                        <div th:if="${daysavail.tuesdayTimeSlot.isEmpty()}">
+                                            <p>No available timeslots for Tuesday.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!----- Wednesday --->
+                                <div id ="Wednesday" class="day-list form-group row d-none" >
+                                    <!-- for label -->
+                                    <div class="justify-content-center align-content-center cardLabel px-4">
+                                        <label>Meeting Windows: </label>
+                                    </div>
+                                    <div class="scrollable-container" >
+                                        <ul class="timeslotList" th:if="${!daysavail.wednesdayTimeSlot.isEmpty()}">
+                                            <li th:each="timeSlot : ${daysavail.wednesdayTimeSlot}">
+                                                <button class="btn btn-outline-primary btn-block m-1" type="button" th:text="${timeSlot.startTime}+'-'+${timeSlot.endTime}" onclick="selectTimeSlot('Wednesday', this.innerText)"></button>
+                                            </li>
+                                        </ul>
+                                        <div th:if="${daysavail.wednesdayTimeSlot.isEmpty()}">
+                                            <p>No available timeslots for Wednesday.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!----- Thursday --->
+                                <div id ="Thursday" class="day-list form-group row d-none" >
+                                    <!-- for label -->
+                                    <div class="justify-content-center align-content-center cardLabel px-4">
+                                        <label>Meeting Windows: </label>
+                                    </div>
+                                    <div class="scrollable-container" >
+                                        <ul class="timeslotList" th:if="${!daysavail.thursdayTimeSlot.isEmpty()}">
+                                            <li th:each="timeSlot : ${daysavail.thursdayTimeSlot}">
+                                                <button class="btn btn-outline-primary btn-block m-1" type="button" th:text="${timeSlot.startTime}+'-'+${timeSlot.endTime}" onclick="selectTimeSlot('Thursday', this.innerText)"></button>
+                                            </li>
+                                        </ul>
+                                        <div th:if="${daysavail.thursdayTimeSlot.isEmpty()}">
+                                            <p>No available timeslots for Thursday.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!----- Friday --->
+                                <div id ="Friday" class="day-list form-group row d-none" >
+                                    <!-- for label -->
+                                    <div class="justify-content-center align-content-center cardLabel px-4">
+                                        <label>Meeting Windows: </label>
+                                    </div>
+                                    <div class="scrollable-container" >
+                                        <ul class="timeslotList" th:if="${!daysavail.fridayTimeSlot.isEmpty()}">
+                                            <li th:each="timeSlot : ${daysavail.fridayTimeSlot}">
+                                                <button class="btn btn-outline-primary btn-block m-1" type="button" th:text="${timeSlot.startTime}+'-'+${timeSlot.endTime}" onclick="selectTimeSlot('Friday', this.innerText)"></button>
+                                            </li>
+                                        </ul>
+                                        <div th:if="${daysavail.fridayTimeSlot.isEmpty()}">
+                                            <p>No available timeslots for Friday.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!----- Saturday --->
+                                <div id ="Saturday" class="day-list form-group row d-none" >
+                                    <!-- for label -->
+                                    <div class="justify-content-center align-content-center cardLabel px-4">
+                                        <label>Meeting Windows: </label>
+                                    </div>
+                                    <div class="scrollable-container" >
+                                        <ul class="timeslotList" th:if="${!daysavail.saturdayTimeSlot.isEmpty()}">
+                                            <li th:each="timeSlot : ${daysavail.saturdayTimeSlot}">
+                                                <button class="btn btn-outline-primary btn-block m-1" type="button" th:text="${timeSlot.startTime}+'-'+${timeSlot.endTime}" onclick="selectTimeSlot('Saturday', this.innerText)"></button>
+                                            </li>
+                                        </ul>
+                                        <div th:if="${daysavail.saturdayTimeSlot.isEmpty()}">
+                                            <p>No available timeslots for Saturday.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!----- Sunday --->
+                                <div id ="Sunday" class="day-list form-group row d-none" >
+                                    <!-- for label -->
+                                    <div class="justify-content-center align-content-center cardLabel px-4">
+                                        <label>Meeting Windows: </label>
+                                    </div>
+                                    <div class="scrollable-container" >
+                                        <ul class="timeslotList" th:if="${!daysavail.sundayTimeSlot.isEmpty()}">
+                                            <li th:each="timeSlot : ${daysavail.sundayTimeSlot}">
+                                                <button class="btn btn-outline-primary btn-block m-1" type="button" th:text="${timeSlot.startTime}+'-'+${timeSlot.endTime}" onclick="selectTimeSlot('Sunday', this.innerText)"></button>
+                                            </li>
+                                        </ul>
+                                        <div th:if="${daysavail.sundayTimeSlot.isEmpty()}">
+                                            <p>No available timeslots for Sunday.</p>
                                         </div>
                                     </div>
                                 </div>
