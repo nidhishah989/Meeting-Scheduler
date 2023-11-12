@@ -74,37 +74,30 @@
                 </div>
                 <!-- RIGHT SIDE FORM  -->
                 <div class="col-md-6 mt-3 px-4 text-center d-none" id="formColumn">
-                    <form id="meetingForm">
+                    <form id="meetingForm" th:action="@{/meetingschedule/{id}(id=${teammember.id})}" method="post">
 
                         <div class="card text-center">
+                            <!---SELECTED DATE -->
                             <div class="card-header">
                                 <div class="row text-center align-items-center justify-content-center">
                                     <label class="col-5 p-0 text-end" for="selectedDate"><b>Selected Date:</b></label>
-                                    <input class="col-4 p-0 timezone_border" name="selectedDate" id="selectedDate" th:value="selectedDate" readonly>
+                                    <input class="col-4 p-0 timezone_border" name="selectedDate" id="selectedDate" value="selectedDate" readonly>
                                 </div>
                             </div>
                             <div class="card-body">
-<!--                                <div class="row text-center align-items-center justify-content-center my-2">-->
-<!--                                    <label class="cardLabel">Meeting Type</label>-->
-<!--                                    <div class="form-check form-check-inline" th:if="${teammember.isOnSiteMeetingAvailable()}">-->
-<!--                                        <input class="form-check-input" type="radio" name="meetingType" id="onSiteRadio" value="OnSite">-->
-<!--                                        <label class="form-check-label" for="onSiteRadio">OnSite</label>-->
-<!--                                    </div>-->
-<!--                                    <div class="form-check form-check-inline" th:if="${teammember.isZoomMeetingAvailable()}">-->
-<!--                                        <input class="form-check-input" type="radio" name="meetingType" id="zoomRadio" value="Zoom">-->
-<!--                                        <label class="form-check-label" for="zoomRadio">Zoom</label>-->
-<!--                                    </div>-->
-<!--                                </div>-->
+                                <!-- MEETING TYPE SELECTION-->
                                 <div class="row text-center align-items-center justify-content-center my-1">
-                                    <label class="cardLabel">Select Meeting Type :</label>
-                                    <select id="meetingType" name="selectedMeetingType" class="px-0 text-center">
-                                        <option selected>Check Options</option>
+                                    <label class="cardLabel">Select Meeting Type</label>
+                                    <select id="meetingType" name="selectedMeetingType" class="px-0 text-center" required>
+                                        <option disabled selected>Choose option</option>
                                         <option th:if="${teammember.isOnSiteMeetingAvailable()}">OnSite</option>
                                         <option th:if="${teammember.isZoomMeetingAvailable()}">Zoom</option>
                                     </select>
                                 </div>
-
-                                <!-- EACH DAY AVAILABILITY LIST DISPLAY  -->
+                                <!---SELECTED TIMESLOT -->
+                                <input type="hidden" name="selectedTimeSlot" id="selectedTimeSlot" value="timeSlot">
+                                <!------------------------>
+                                <!--EACH DAY AVAILABILITY LIST DISPLAY-->
                                 <div class="Monday day-list form-group row" >
                                     <!-- for label -->
                                     <div class="justify-content-center align-content-center cardLabel px-4">
@@ -122,57 +115,14 @@
                                     </div>
                                 </div>
 
-                                <!--                                <a href="#" class="btn btn-primary">Go somewhere</a>-->
+
                             </div>
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary" id="sheduleButton">Schedule Meeting</button>
+                                <button type="submit" class="btn btn-primary" id="sheduleButton" onclick="return checkForm(event)">Schedule Meeting</button>
+
                             </div>
                         </div>
 
-<!--                        <div class="mb-3 row text-center align-items-center justify-content-center">-->
-<!--                            <label class="col-6 px-0 text-end" for="timeZone">Nidhi Shah TimeZone:</label>-->
-<!--                            <input class="col-6 px-0 timezone_border" name="timeZone" id="timeZone" th:value="'Africa/Addis_Ababa'" readonly>-->
-
-<!--                        </div>-->
-<!--                        <div class="mb-3 row text-center align-items-center justify-content-center">-->
-<!--                            <label class="col-6 px-0 text-end" for="meetingType">Select Meeting Type: </label>-->
-<!--                        </div>-->
-<!--                        <div class="form-group">-->
-<!--                            <label for="exampleFormControlSelect2">Example multiple select</label>-->
-<!--                            <select multiple class="form-control" id="exampleFormControlSelect2">-->
-<!--                                <option>1</option>-->
-<!--                                <option>2</option>-->
-<!--                                <option>3</option>-->
-<!--                                <option>4</option>-->
-<!--                                <option>5</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-
-
-<!--                        &lt;!&ndash; Monday's time slots &ndash;&gt;-->
-<!--                        <div class="monday" th:if="${daysAvailabilityDTO != null and daysAvailabilityDTO.mondayTimeSlot != null}">-->
-<!--                            <ul>-->
-<!--                                <li th:each="timeSlot : ${daysAvailabilityDTO.mondayTimeSlot}">-->
-<!--                                    <button type="button" th:text="${timeSlot}" onclick="selectTimeSlot('Monday', this.innerText)" />-->
-<!--                                    <input type="hidden" name="selectedTimeSlot" value="${timeSlot}" />-->
-<!--                                </li>-->
-<!--                            </ul>-->
-<!--                        </div>-->
-
-<!--                        &lt;!&ndash; Tuesday's time slots &ndash;&gt;-->
-<!--                        <div class="tuesday" th:if="${daysAvailabilityDTO != null and daysAvailabilityDTO.tuesdayTimeSlot != null}">-->
-<!--                            <ul>-->
-<!--                                <li th:each="timeSlot : ${daysAvailabilityDTO.tuesdayTimeSlot}">-->
-<!--                                    <button type="button" th:text="${timeSlot}" onclick="selectTimeSlot('Tuesday', this.innerText)" />-->
-<!--                                    <input type="hidden" name="selectedTimeSlot" value="${timeSlot}" />-->
-<!--                                </li>-->
-<!--                            </ul>-->
-<!--                        </div>-->
-
-<!--                        &lt;!&ndash; Repeat the same structure for other days (Wednesday to Sunday) &ndash;&gt;-->
-<!--                        &lt;!&ndash; ... &ndash;&gt;-->
-
-<!--                        <button type="submit" class="btn btn-primary">Schedule Meeting</button>-->
                     </form>
                 </div>
                 <!----END OF FORM ----->
@@ -189,32 +139,3 @@
 
 </body>
 </html>
-<!---THE FORM -->
-
-<!--                <div class="col-md-6 p-4 text-center display-none">-->
-<!--                    <form>-->
-<!--                        <div class="row">-->
-<!--                            <div class="form-group">-->
-<!--                                <label class="form-label" th:text="">Nidhi Shah TimeZone</label>-->
-<!--                                <input class="form-control border-none" th:text="TimeZone" readonly>-->
-<!--                            <div>-->
-<!--                            <div> Get this option selection while post the form in dto-->
-<!--                                Dropdown : Options for meeting Type: as if iszoommeeting is true, so that option-->
-<!--                                Dropdown : Options for meeting Type: as if onsitemeeting is true, so that option-->
-<!--                            </div>-->
-<!--                            <input hidden to store the selected date>-->
-<!--                            <div class="row"> Get the selected timeslot in back with value-->
-<!--                                if selectedday thymeleaf list not null-->
-<!--                                <div class="monday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
-<!--                                <div class="tuesday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
-<!--                                <div class="wednesday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
-<!--                                <div class="thursday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
-<!--                                <div class="friday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
-<!--                                <div class="saturday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
-<!--                                <div class="sunday" display="none">#mondayTImeslots Thymeleaf list each with <li><button>Each item</button></li></div>-->
-<!--                                else <div> show a message as : Nidhi Shah not available on Selected Day</div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                                <div>Submit button for form </div>-->
-<!--                    </form>-->
-<!--                </div>-->

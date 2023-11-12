@@ -156,4 +156,18 @@ public class ClientController {
         }
 
     }
+
+    @PostMapping("/meetingschedule/{id}")
+    public void setClientMeeting(@ModelAttribute(name="selectedDate") String meetingdate,
+                                 @ModelAttribute(name="selectedMeetingType")String meetingType,
+                                 @ModelAttribute(name="selectedTimeSlot") String meetingslot,
+                                 @PathVariable(name="id")String teammemberId){
+
+        System.out.println("SCHEDULE MEETING FOR A CLIENT WITH TEAMMEMBER: ");
+        System.out.println("Team Member id: "+ teammemberId);
+        System.out.println("Meeting Date: "+ meetingdate);
+        System.out.println("Meeting Type: " +meetingType);
+        System.out.println("Meeting Timeslot: "+ meetingslot);
+
+    }
 }

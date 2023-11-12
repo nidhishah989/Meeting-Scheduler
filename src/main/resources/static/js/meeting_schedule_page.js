@@ -57,8 +57,8 @@ function updateMonthYear() {
 }
 
 function selectTimeSlot(day, timeSlot) {
-    document.getElementById('selectedDate').value = day; // Set the selected date
-    document.getElementById('selectedTimeZone').value = timeSlot; // Set the selected time zone
+    console.log(timeSlot)
+    document.getElementById('selectedTimeSlot').value = timeSlot; // Set the selected time zone
 }
 
 function setSelectedDate(day) {
@@ -89,6 +89,29 @@ function setSelectedDate(day) {
 
 
 }
+
+function checkForm(event) {
+    const meetingType = document.getElementById("meetingType").value;
+    const selectedTimeSlot = document.getElementById("selectedTimeSlot").value;
+    const selectedDate = document.getElementById("selectedDate").value;
+    console.log("meetingType: ",meetingType);
+    console.log("selectedTimeSlot: ",selectedTimeSlot)
+    console.log("selectedDate: ",selectedDate)
+    if (meetingType !== "OnSite" && meetingType !== "Zoom") {
+        alert("Please select a Meeting Type.");
+        return false;
+    } else if (selectedTimeSlot === "timeSlot") {
+        alert("Please select a meeting Window to schedule meeting.");
+        return false;
+    } else if (selectedDate === "") {
+        alert("Please select a Date.");
+        return false;
+    } else {
+        return true; // Form submission allowed
+    }
+}
+
+
 
 updateMonthYear();
 generateCalendar();
