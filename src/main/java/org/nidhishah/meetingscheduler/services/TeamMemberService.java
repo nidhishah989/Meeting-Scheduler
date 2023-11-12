@@ -22,4 +22,12 @@ public interface TeamMemberService {
     public boolean setTeamMemberAvailability(Long id, TeamMemberDTO teamMemberDTO, DaysAvailabilityDTO daysAvailabilityDTO);
 
     public List<TeamMemberDTO> getAvailableTeamMembersForMeetingSchedule(String organization);
+
+    //retrieve user info from user and teammemberextrainfo
+    public TeamMemberDTO getTeamMemberInfoById(String Id);
+
+    //perticular provider (Team member) availability with window timeslots for meeting schedule
+    public DaysAvailabilityDTO getTeamMemberMeetingAvail(String meetingwindow,String id);
+
+
 }

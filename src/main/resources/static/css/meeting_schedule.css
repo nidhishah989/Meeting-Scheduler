@@ -51,11 +51,20 @@ body {
     border: 1px solid ghostwhite;
     font-weight: bold;
 }
-
+.calendar-day:hover{
+    background-color: grey;
+}
+.calendar-day:active{
+    background-color: #315a70;
+}
+.calendar-day::selection{
+    background-color: #315a70;
+}
 .current-day {
     background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
     color: #fff;
     font-weight: bold;
+    border-radius: 10px;
 }
 
 .calendar-footer {
@@ -64,6 +73,58 @@ body {
     text-align: center;
 }
 
-timezone_border{
-    border:none;
+#formColumn{
+    font-size: 16px;
+    box-shadow: #cccccc;
+}
+
+
+.timezone_border{
+    border: none;
+    background: none;
+    color:white;
+}
+
+.scrollable-container {
+    max-height: 150px; /* Set a max height */
+    overflow-y: auto;  /* Enable vertical scrolling */
+}
+.card-body{
+    padding-top: 0;
+    padding-bottom: 0;
+    /*background: rgba(33,37,41,0.03);*/
+}
+
+/*.card-body .row{*/
+/*    border: solid rgba(33,37,41,0.03);*/
+/*}*/
+.card-header{
+    font-size: 20px;
+    padding: 10px 0;
+    background: #315a70;
+    color:white;
+}
+
+.cardLabel{
+    background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+    color: #fff;
+    padding: 6px;
+    border-radius: 23px;
+    /*background: rgba(33,37,41,0.03);*/
+}
+
+.timeslotList{
+    list-style: none;
+}
+
+#meetingType{
+    margin-top: 4px;
+    padding:10px;
+    border:solid blue 0.2px;
+    border-radius: 23px;
+}
+
+#sheduleButton{
+    background-color: #315a70;
+    color: white;
 }

@@ -61,7 +61,7 @@
                      <!---THE FORM -->
                      <div class="col-md-6 p-4 text-center">
                          <h2 class="mb-3">Set Up a Meeting</h2>
-                         <form class="px-3" th:action="@{/setup-meeting}" th:if="${teamembers.size()>0}">
+                         <form class="px-3" th:action="@{/setup-meeting}" method="post" th:if="${teamembers.size()>0}">
                              <div class="form-group">
                                  <label class="form-label mb-3" for="teamMember" th:text="'With whom from '+${organization}+' organization you want to do the meeting?'"></label>
                                  <select class="form-control mb-3" id="teamMember" name="selectedTeamMember">

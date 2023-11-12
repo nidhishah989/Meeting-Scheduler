@@ -383,6 +383,94 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         return availableMemberList;
     }
 
+    //just gather team member infor: first name, last name, organization,
+    // meeting type list, meeting window, timezone
+    //user is already in database, however, if is not teammember or admin
+    // or is not enable yet or user with such id not found
+    @Override
+    public TeamMemberDTO getTeamMemberInfoById(String Id) {
+        TeamMemberDTO teamMemberDTO = new TeamMemberDTO();
+        Long id = Long.parseLong(Id);
+        //get user info from user repository first
+        User teammember = userRepository.getUsersById(id);
+        if (teammember != null && teammember.getisEnabled() &&
+                (teammember.getRole().getRoleName().equals("admin") || teammember.getRole().getRoleName().equals("teammember"))) {
+        // transfer data to teammemberDTO
+            teamMemberDTO.setId(id);
+            teamMemberDTO.setFirstName(teammember.getFirstName());
+            teamMemberDTO.setLastName(teammember.getLastName());
+            teamMemberDTO.setOrgName(teammember.getOrganization().getOrgName());
+            teamMemberDTO.setRoleName(teammember.getRole().getRoleName());
+
+            // Get user extra information from userextrainforrepository
+            TeamMemberExtraInfo teamMemberExtraInfo = teamMemberExtraInfoRepository.getTeamMemberExtraInfoByUser_Id(id);
+            //transfer data to teammemberDTO
+            teamMemberDTO.setMeetingWindow(teamMemberExtraInfo.getMeetingWindow());
+            teamMemberDTO.setTimeZone(teamMemberExtraInfo.getTimeZone());
+            teamMemberDTO.setOnSiteMeetingAvailable(teamMemberExtraInfo.isOnSiteMeetingAvailable());
+            teamMemberDTO.setZoomMeetingAvailable(teamMemberExtraInfo.isZoomMeetingAvailable());
+            return teamMemberDTO;
+        }
+        else{
+            return null;
+        }
+    }
+
+    //teammember information is already checked befor this call,
+    //Convert each availability in the form of meeting window gap and return the availability DTO
+    @Override
+    public DaysAvailabilityDTO getTeamMemberMeetingAvail(String meetingWindow, String id) {
+        Long teamid = Long.parseLong(id);
+        Integer meetwindow = Integer.parseInt(meetingWindow);
+        DaysAvailabilityDTO daysAvailabilityDTO = new DaysAvailabilityDTO();
+        //let's get actual availability from back
+        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(teamid);
+        if(memberAvailability != null){
+           // first need to deserialize string to list- pass this list to get meeting window timeslot list
+            // only if the string is not null.
+            //for monday
+            if(memberAvailability.getMondayTimeSlot()!=null){
+                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getMondayTimeSlot());
+                daysAvailabilityDTO.setMondayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
+            }
+            //for tuesday
+            if(memberAvailability.getTuesdayTimeSlot()!=null){
+                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getTuesdayTimeSlot());
+                daysAvailabilityDTO.setTuesdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
+            }
+            //for wednesday
+            if(memberAvailability.getWednesdayTimeSlot()!=null){
+                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getWednesdayTimeSlot());
+                daysAvailabilityDTO.setWednesdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
+            }
+            //for thursday
+            if(memberAvailability.getThursdayTimeSlot()!=null){
+                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getThursdayTimeSlot());
+                daysAvailabilityDTO.setThursdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
+            }
+            //for friday
+            if(memberAvailability.getFridayTimeSlot()!=null){
+                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getFridayTimeSlot());
+                daysAvailabilityDTO.setFridayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
+            }
+            //for saturday
+            if(memberAvailability.getSaturdayTimeSlot()!=null){
+                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getSundayTimeSlot());
+                daysAvailabilityDTO.setSaturdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
+            }
+            //for sunday
+            if(memberAvailability.getSundayTimeSlot()!=null){
+                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getSundayTimeSlot());
+                daysAvailabilityDTO.setSundayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
+            }
+
+           return daysAvailabilityDTO;
+        }
+        else{
+            return null;
+        }
+    }
+
     private List<TimeSlot> deserializeDayTimeSlots(String dayTimeSlots){
         TeamMemberAvailability teamavailibility = new TeamMemberAvailability();
         //if deserialize throw exception, just put default one
@@ -405,6 +493,21 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             System.out.println("serialize get wrong.");
             return null;
         }
+    }
+
+    private List<TimeSlot> prepareMeetingTimeslotsToShow(Integer window,List<TimeSlot> dayTimeSlotList){
+        List<TimeSlot> meetingSlots = new ArrayList<>();
+        for (TimeSlot slot : dayTimeSlotList) {
+            LocalTime start = LocalTime.parse(slot.getStartTime());
+            LocalTime end = LocalTime.parse(slot.getEndTime());
+
+            while (start.isBefore(end)) {
+                LocalTime nextTime = start.plusMinutes(window);
+                meetingSlots.add(new TimeSlot(start, nextTime));
+                start = nextTime;
+            }
+        }
+        return meetingSlots;
     }
 
 

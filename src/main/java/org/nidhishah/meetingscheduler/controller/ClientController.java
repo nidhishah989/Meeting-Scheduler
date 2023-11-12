@@ -1,5 +1,6 @@
 package org.nidhishah.meetingscheduler.controller;
 
+import org.nidhishah.meetingscheduler.dto.DaysAvailabilityDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
@@ -11,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -79,7 +77,7 @@ public class ClientController {
      * This form only gets all team members first name and last name who are available for meetings..
      */
 
-    @GetMapping("meeting_schedule")
+    @GetMapping("/meeting_schedule")
     public String getMeetingScheduleForm1(Model model){
         try{
             //get authenticated person info
@@ -106,10 +104,56 @@ public class ClientController {
         }
     }
 
-    @GetMapping("setup-meeting")
-    public String getMeetingScheduleForm2(){
-        //get id of the teammember and return a page with list of meeting windows for each day..
-        return "meeting_schedule_page";
+    @PostMapping("/setup-meeting")
+    public String getMeetingScheduleForm2(@ModelAttribute(name="selectedTeamMember")String id){
+        //get id of the teammember and redirect to second form
+        System.out.println("In the process of getting second schedule form, teammember id: "+ id);
+        return "redirect:/schedule-meeting/"+id;
     }
 
+    //get id of the teammember and return a page with list of meeting windows for each day..
+    @GetMapping("/schedule-meeting/{id}")
+    public String showSecondMeetingForm(@PathVariable(name="id")String id,Model model){
+        try {
+            DaysAvailabilityDTO availabilityDTO = new DaysAvailabilityDTO();
+            System.out.println("IN THE SECOND FORM GET MAPPING: TEAMMEMBER:ID" + id);
+            //get teammember info: firstname, last name, meeting type options, meeting window, timezone
+            TeamMemberDTO teamMemberDTO = teamMemberService.getTeamMemberInfoById(id);
+            //if user info found, and user is teammember or admin and user is enable
+            if (teamMemberDTO != null) {
+                System.out.println("IN THE SECOND FORM GET MAPPING: TEAMMEMBER FOUND");
+                // have to check user organziation match with client org
+                //get authenticated person info
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+                    //organization information collection
+                    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                    String organizationName = userPrincipal.getOrganizationName();
+                    //check org matching - good to go, get availability
+                    if (teamMemberDTO.getOrgName().equals(organizationName)) {
+                        System.out.println("IN THE SECOND FORM GET MAPPING:TEAMMEMBER AND CLIENT ORGANIZATION MATCH");
+                        //get days availability based on meeting window and team member id
+                        availabilityDTO = teamMemberService.getTeamMemberMeetingAvail(teamMemberDTO.getMeetingWindow(),id);
+                        if(availabilityDTO == null){
+                            throw new Exception();
+                        }
+                    } else {
+                        throw new Exception();
+                    }
+                }
+            }
+            else{
+                throw new Exception();
+            }
+            System.out.println("IN THE SECOND FORM GET MAPPING: DATA HAS RECEIVED FROM BACK");
+            //add everything in model and return the page
+            model.addAttribute("teammember",teamMemberDTO);
+            model.addAttribute("daysavail",availabilityDTO);
+            return "meeting_schedule_page";
+        }catch (Exception e){
+            e.printStackTrace();
+            return "Error/404";
+        }
+
+    }
 }

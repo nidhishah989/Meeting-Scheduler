@@ -76,6 +76,17 @@ function setSelectedDate(day) {
     form.classList.remove("d-none");
     const selectedDate = document.getElementById("selectedDate");
     selectedDate.value = formattedDate;
+    const calendercolumn = document.getElementById("calenderside");
+    // Get the screen width
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+
+    if (mediaQuery.matches) {
+        // Mobile size or smaller
+        calendercolumn.style.display = "none"; // Hide the calenderside for mobile
+    } else {
+        document.getElementById("calenderside").classList.remove("offset-md-3");
+    }
+
 
 }
 
