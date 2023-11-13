@@ -1,8 +1,6 @@
 package org.nidhishah.meetingscheduler.controller;
 
-import org.nidhishah.meetingscheduler.dto.DaysAvailabilityDTO;
-import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
-import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
+import org.nidhishah.meetingscheduler.dto.*;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.ClientServiceImpl;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
@@ -162,14 +160,53 @@ public class ClientController {
                                  @ModelAttribute(name="selectedMeetingType")String meetingType,
                                  @ModelAttribute(name="selectedTimeSlot") String meetingslot,
                                  @ModelAttribute(name="selectedDay") String meetingDay,
-                                 @PathVariable(name="id")String teammemberId){
+                                 @PathVariable(name="id")String teammemberId,
+                                 RedirectAttributes redirectAttributes, TeamMemberDTO teamMemberDTO){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+                //organization information collection
+                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                String clientId = String.valueOf(userPrincipal.getUserId());
+                String organization = userPrincipal.getOrganizationName();
 
-        System.out.println("SCHEDULE MEETING FOR A CLIENT WITH TEAMMEMBER: ");
-        System.out.println("Team Member id: "+ teammemberId);
-        System.out.println("Meeting Date: "+ meetingdate);
-        System.out.println("Meeting Day: "+ meetingDay);
-        System.out.println("Meeting Type: " +meetingType);
-        System.out.println("Meeting Timeslot: "+ meetingslot);
+                //Timezone model
+                TimeSlot timeSlot = new TimeSlot();
+                String[] times = meetingslot.split("-");
+                timeSlot.setStartTime(times[0]);
+                timeSlot.setEndTime(times[1]);
+                //Meeting information stored.
+                MeetingDTO meetingDTO = new MeetingDTO();
+                meetingDTO.setMeetingType(meetingType);
+                meetingDTO.setMeetingDate(meetingdate);
+                meetingDTO.setMeetingDay(meetingDay);
+                meetingDTO.setTimeslot(timeSlot);
+                meetingDTO.setTeamMemberId(teammemberId);
+                meetingDTO.setClientID(clientId);
+                meetingDTO.setOrganization(organization);
+                /////////////////////////////////////////////////////
+                System.out.println("SCHEDULE MEETING FOR A CLIENT WITH TEAMMEMBER: ");
+                System.out.println("Team Member id: " + teammemberId);
+                System.out.println("Meeting Date: " + meetingdate);
+                System.out.println("Meeting Day: " + meetingDay);
+                System.out.println("Meeting Type: " + meetingType);
+                System.out.println("Meeting Timeslot: " + meetingslot);
+                System.out.println("FIrst name: "+ teamMemberDTO.getFirstName());
+                System.out.println("Last name:" + teamMemberDTO.getLastName());
+                ////////////////////////////////////////////////////////////////////
+                // save the meeting and change the teammember availability
+                //if success- change teammember availability
+                if (clientService.saveClientMeeting(meetingDTO)) {
+                    redirectAttributes.addFlashAttribute("success","Your Meeting has been scheduled with ");
+
+                } else {
+                    throw new Exception();
+                }
+
+            }
+        }catch (Exception e){
+            // return the meeting page again...
+        }
 
     }
 }

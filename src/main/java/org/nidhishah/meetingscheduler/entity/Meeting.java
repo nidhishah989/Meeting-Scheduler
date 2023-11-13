@@ -1,8 +1,16 @@
 package org.nidhishah.meetingscheduler.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Meeting {
 
 
@@ -18,11 +26,11 @@ public class Meeting {
 
     private String MeetingDate;
 
-    @ManyToOne(targetEntity = ClientExtraInfo.class, fetch = FetchType.LAZY)
-    private ClientExtraInfo Client;
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    private User client;
 
-    @ManyToOne(targetEntity = TeamMemberExtraInfo.class, fetch = FetchType.LAZY)
-    private TeamMemberExtraInfo provider;
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    private User provider;
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
     private Organization organization;

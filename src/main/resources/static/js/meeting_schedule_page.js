@@ -108,14 +108,16 @@ function checkForm(event) {
     const meetingType = document.getElementById("meetingType").value;
     const selectedTimeSlot = document.getElementById("selectedTimeSlot").value;
     const selectedDate = document.getElementById("selectedDate").value;
+    const selectedDay = document.getElementById("selectedDay").value;
     console.log("meetingType: ",meetingType);
     console.log("selectedTimeSlot: ",selectedTimeSlot)
+    console.log("selectedDAY: ",selectedDay)
     console.log("selectedDate: ",selectedDate)
     if (meetingType !== "OnSite" && meetingType !== "Zoom") {
         alert("Please select a Meeting Type.");
         return false;
     } else if (selectedTimeSlot === "timeSlot" && selectedDay ==="day") {
-        alert("Please select a meeting Window to schedule meeting.");
+        alert("Please select a meeting Window to schedule meeting.\n If no window available, choose another day for meeting.");
         return false;
     } else if (selectedDate === "") {
         alert("Please select a Date.");

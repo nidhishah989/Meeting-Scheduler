@@ -128,12 +128,12 @@
                                         <h5>Monday</h5>
                                         <button type="button" class="btn btn-primary addTimeSlotBtn">+</button>
                                     </div>
-                                    <div class="card-body px-auto" >
+                                    <div class="card-body px-auto day-card" data-day-section="monday"  >
 <!--                                        <div class="d-flex justify-content-between pb-1">-->
 <!--                                            <h5 class="card-title">Monday</h5>-->
 <!--                                            <button type="button" class="btn btn-primary addTimeSlotBtn">+</button>-->
 <!--                                        </div>-->
-                                        <div class="row d-flex day-content" data-day-section="monday" th:each="timeSlot, mondayIndex : ${daysavail.mondayTimeSlot}">
+                                        <div class="row d-flex day-content"  th:if="${daysavail.getMondayTimeSlot!= null}" th:each="timeSlot, mondayIndex : ${daysavail.mondayTimeSlot}">
                                             <div class="col-5">
                                                 <div class="input-group date  bootstrap-timepicker">
                                                     <input type="text" class="form-control timePicker" th:field="*{mondayTimeSlot[__${mondayIndex.index}__].startTime}" required>
@@ -172,8 +172,8 @@
                                         <h5>Tuesday</h5>
                                         <button type="button" class="btn btn-primary addTimeSlotBtn">+</button>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row d-flex day-content" data-day-section="tuesday" th:each="timeSlotT, tuesdayIndex : ${daysavail.tuesdayTimeSlot}">
+                                    <div class="card-body day-card" data-day-section="tuesday">
+                                        <div class="row d-flex day-content"   th:if="${daysavail.tuesdayTimeSlot !=null}" th:each="timeSlotT, tuesdayIndex : ${daysavail.tuesdayTimeSlot}">
                                             <div class="col-5">
                                                 <div class="input-group date  bootstrap-timepicker"
                                                      id="tuesday-start-time">
@@ -212,8 +212,8 @@
                                         <h5>Wednesday</h5>
                                         <button type="button" class="btn btn-primary addTimeSlotBtn">+</button>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row d-flex day-content" data-day-section="wednesday" th:each="timeSlotW, wednesdayIndex : ${daysavail.wednesdayTimeSlot}">
+                                    <div class="card-body day-card" data-day-section="wednesday">
+                                        <div class="row d-flex day-content"  th:if="${daysavail.wednesdayTimeSlot !=null}" th:each="timeSlotW, wednesdayIndex : ${daysavail.wednesdayTimeSlot}">
                                             <div class="col-5">
                                                 <div class="input-group date  bootstrap-timepicker"
                                                      id="wednesday-start-time">
@@ -252,8 +252,8 @@
                                         <h5>Thursday</h5>
                                         <button type="button" class="btn btn-primary addTimeSlotBtn">+</button>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row d-flex day-content" data-day-section="thursday" th:each="timeSlotTH, thursdayIndex : ${daysavail.thursdayTimeSlot}">
+                                    <div class="card-body day-card" data-day-section="thursday">
+                                        <div class="row d-flex day-content"  th:if="${daysavail.thursdayTimeSlot !=null}" th:each="timeSlotTH, thursdayIndex : ${daysavail.thursdayTimeSlot}">
                                             <div class="col-5">
                                                 <div class="input-group date  bootstrap-timepicker"
                                                      id="thursday-start-time">
@@ -292,8 +292,8 @@
                                         <h5>Friday</h5>
                                         <button type="button" class="btn btn-primary addTimeSlotBtn">+</button>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row d-flex day-content" data-day-section="friday" th:each="timeSlotF, firdayIndex : ${daysavail.fridayTimeSlot}">
+                                    <div class="card-body day-card" data-day-section="friday">
+                                        <div class="row d-flex day-content" th:if="${daysavail.fridayTimeSlot != null}" th:each="timeSlotF, firdayIndex : ${daysavail.fridayTimeSlot}">
                                             <div class="col-5">
                                                 <div class="input-group date  bootstrap-timepicker" id="firday-start-time">
                                                     <input type="text" class="form-control timePicker" th:field="*{fridayTimeSlot[__${firdayIndex.index}__].startTime}">
@@ -330,8 +330,8 @@
                                         <h5>Saturday</h5>
                                         <button type="button" class="btn btn-primary addTimeSlotBtn">+</button>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row d-flex day-content" data-day-section="saturday" th:each="timeSlotS, saturdayIndex : ${daysavail.saturdayTimeSlot}">
+                                    <div class="card-body day-card" data-day-section="saturday" >
+                                        <div class="row d-flex day-content"  th:if="${daysavail.saturdayTimeSlot != null}" th:each="timeSlotS, saturdayIndex : ${daysavail.saturdayTimeSlot}">
                                             <div class="col-5">
                                                 <div class="input-group date  bootstrap-timepicker" id="saturday-start-time">
                                                     <input type="text" class="form-control timePicker" th:field="*{saturdayTimeSlot[__${saturdayIndex.index}__].startTime}">
@@ -368,8 +368,8 @@
                                         <h5>Sunday</h5>
                                         <button type="button" class="btn btn-primary addTimeSlotBtn">+</button>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row d-flex day-content" data-day-section="sunday" th:each="timeSlotSU, sundayIndex : ${daysavail.sundayTimeSlot}">
+                                    <div class="card-body day-card" data-day-section="sunday" >
+                                        <div class="row d-flex day-content"  th:if="${daysavail.sundayTimeSlot!= null}" th:each="timeSlotSU, sundayIndex : ${daysavail.sundayTimeSlot}">
                                             <div class="col-5">
                                                 <div class="input-group date  bootstrap-timepicker" id="sunday-start-time">
                                                     <input type="text" class="form-control timePicker" th:field="*{sundayTimeSlot[__${sundayIndex.index}__].startTime}">

@@ -67,7 +67,8 @@ $(document).ready(function () {
         console.log(index);
 
         // Get the day from data attribute of the first element with the class 'day-content'
-        var day = $(this).closest('.day-container').find('.day-content:first').data('day-section');
+//        var day = $(this).closest('.day-container').find('.day-content:first').data('day-section');
+       var day = $(this).closest('.day-container').find('.day-card').data('day-section');
         console.log(day);
 
         // Create a new row div using jQuery

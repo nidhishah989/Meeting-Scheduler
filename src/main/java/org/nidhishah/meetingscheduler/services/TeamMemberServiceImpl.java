@@ -226,13 +226,28 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         // Not Empty- Let's create dto with stored values - deserialize each day if present
         if (teamMemberAvailability!= null)
         {
-            availabilityDTO.setMondayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getMondayTimeSlot()));
-            availabilityDTO.setTuesdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getTuesdayTimeSlot()));
-            availabilityDTO.setWednesdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getWednesdayTimeSlot()));
-            availabilityDTO.setThursdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getThursdayTimeSlot()));
-            availabilityDTO.setFridayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getFridayTimeSlot()));
-            availabilityDTO.setSaturdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getSaturdayTimeSlot()));
-            availabilityDTO.setSundayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getSundayTimeSlot()));
+            if(teamMemberAvailability.getMondayTimeSlot() !=null){
+                availabilityDTO.setMondayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getMondayTimeSlot()));
+            }
+            if(teamMemberAvailability.getTuesdayTimeSlot() !=null) {
+                availabilityDTO.setTuesdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getTuesdayTimeSlot()));
+            }
+            if(teamMemberAvailability.getWednesdayTimeSlot() !=null) {
+                availabilityDTO.setWednesdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getWednesdayTimeSlot()));
+            }
+            if(teamMemberAvailability.getThursdayTimeSlot() !=null) {
+                availabilityDTO.setThursdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getThursdayTimeSlot()));
+            }
+            if(teamMemberAvailability.getFridayTimeSlot() !=null) {
+                System.out.println("@@@@@@@@@@@@@@@updating FRIDAY@@@@@@@@@@@@@@@@");
+                availabilityDTO.setFridayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getFridayTimeSlot()));
+            }
+            if(teamMemberAvailability.getSaturdayTimeSlot() !=null) {
+                availabilityDTO.setSaturdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getSaturdayTimeSlot()));
+            }
+            if(teamMemberAvailability.getSundayTimeSlot() !=null) {
+                availabilityDTO.setSundayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getSundayTimeSlot()));
+            }
         }
         // Empty- load default one
         else
@@ -266,6 +281,11 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             System.out.println("IN MEETING AVAILABILITY SETUP");
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
             System.out.println("CurrentUserID: "+ id);
+            System.out.println("Saturday Time Slot: " + daysAvailabilityDTO.getFridayTimeSlot());
+            System.out.println("Saturday Time Slot: " + daysAvailabilityDTO.getSaturdayTimeSlot());
+
+            System.out.println("Sunday Time Slot: " + daysAvailabilityDTO.getSaturdayTimeSlot());
+
             // first let's get user from user
             User currentuser= userRepository.getUsersById(id);
             System.out.println("found user by id, username: "+ currentuser.getUsername());
@@ -301,13 +321,45 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             if(memberAvailability!= null){
                 System.out.println("member availability need to update:");
                 //first serialize list and get string for each day
-                memberAvailability.setMondayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getMondayTimeSlot()));
-                memberAvailability.setTuesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getTuesdayTimeSlot()));
-                memberAvailability.setWednesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getWednesdayTimeSlot()));
-                memberAvailability.setThursdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getThursdayTimeSlot()));
-                memberAvailability.setFridayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getFridayTimeSlot()));
-                memberAvailability.setSaturdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSaturdayTimeSlot()));
-                memberAvailability.setSundayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSundayTimeSlot()));
+                //monday
+                if (daysAvailabilityDTO.getMondayTimeSlot() != null) {
+                    memberAvailability.setMondayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getMondayTimeSlot()));
+                } else {
+                    memberAvailability.setMondayTimeSlot(null);
+                }
+                //tuesday
+                if (daysAvailabilityDTO.getTuesdayTimeSlot() != null) {
+                    memberAvailability.setTuesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getTuesdayTimeSlot()));
+                } else {
+                    memberAvailability.setTuesdayTimeSlot(null);
+                }
+                if (daysAvailabilityDTO.getWednesdayTimeSlot() != null) {
+                    memberAvailability.setWednesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getWednesdayTimeSlot()));
+                } else {
+                    memberAvailability.setWednesdayTimeSlot(null);
+                }
+                if (daysAvailabilityDTO.getThursdayTimeSlot() != null) {
+                    memberAvailability.setThursdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getThursdayTimeSlot()));
+                } else {
+                    memberAvailability.setThursdayTimeSlot(null);
+                }
+                if (daysAvailabilityDTO.getFridayTimeSlot() != null) {
+                    memberAvailability.setFridayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getFridayTimeSlot()));
+                } else {
+                    memberAvailability.setFridayTimeSlot(null);
+                }
+                if (daysAvailabilityDTO.getSaturdayTimeSlot() != null) {
+                    memberAvailability.setSaturdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSaturdayTimeSlot()));
+                } else {
+                    memberAvailability.setSaturdayTimeSlot(null);
+                }
+                if (daysAvailabilityDTO.getSundayTimeSlot() != null) {
+                    memberAvailability.setSundayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSundayTimeSlot()));
+                } else {
+                    memberAvailability.setSundayTimeSlot(null);
+                }
+
+
                 teamMemberAvalibilityRepository.save(memberAvailability);
                 System.out.println("member availability updated:");
             }
@@ -316,13 +368,28 @@ public class TeamMemberServiceImpl implements TeamMemberService {
                 System.out.println("member availability set up new needed:");
                     TeamMemberAvailability teamMemberAvailability = new TeamMemberAvailability();
                     teamMemberAvailability.setTeammember(currentuser);
+                if(daysAvailabilityDTO.getMondayTimeSlot() != null) {
                     teamMemberAvailability.setMondayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getMondayTimeSlot()));
+                }
+                if(daysAvailabilityDTO.getTuesdayTimeSlot() != null) {
                     teamMemberAvailability.setTuesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getTuesdayTimeSlot()));
+                }
+                if(daysAvailabilityDTO.getWednesdayTimeSlot() != null) {
                     teamMemberAvailability.setWednesdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getWednesdayTimeSlot()));
+                }
+                if(daysAvailabilityDTO.getThursdayTimeSlot() != null) {
                     teamMemberAvailability.setThursdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getThursdayTimeSlot()));
+                }
+                if(daysAvailabilityDTO.getFridayTimeSlot() != null) {
                     teamMemberAvailability.setFridayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getFridayTimeSlot()));
+                }
+                if(daysAvailabilityDTO.getSaturdayTimeSlot() != null){
+                    System.out.println("Serializing Saturday Timeslot result::"+serializeDayTimeSlots(daysAvailabilityDTO.getSaturdayTimeSlot()));
                     teamMemberAvailability.setSaturdayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSaturdayTimeSlot()));
-                    teamMemberAvailability.setSundayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSundayTimeSlot()));
+                }
+              if(daysAvailabilityDTO.getSundayTimeSlot() != null) {
+                  teamMemberAvailability.setSundayTimeSlot(serializeDayTimeSlots(daysAvailabilityDTO.getSundayTimeSlot()));
+              }
                     teamMemberAvalibilityRepository.save(teamMemberAvailability);
                 System.out.println("member availability set up new done");
             }
@@ -420,56 +487,70 @@ public class TeamMemberServiceImpl implements TeamMemberService {
     //Convert each availability in the form of meeting window gap and return the availability DTO
     @Override
     public DaysAvailabilityDTO getTeamMemberMeetingAvail(String meetingWindow, String id) {
-        Long teamid = Long.parseLong(id);
-        Integer meetwindow = Integer.parseInt(meetingWindow);
-        DaysAvailabilityDTO daysAvailabilityDTO = new DaysAvailabilityDTO();
-        //let's get actual availability from back
-        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(teamid);
-        if(memberAvailability != null){
-           // first need to deserialize string to list- pass this list to get meeting window timeslot list
-            // only if the string is not null.
-            //for monday
-            if(memberAvailability.getMondayTimeSlot()!=null){
-                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getMondayTimeSlot());
-                daysAvailabilityDTO.setMondayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
-            }
-            //for tuesday
-            if(memberAvailability.getTuesdayTimeSlot()!=null){
-                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getTuesdayTimeSlot());
-                daysAvailabilityDTO.setTuesdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
-            }
-            //for wednesday
-            if(memberAvailability.getWednesdayTimeSlot()!=null){
-                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getWednesdayTimeSlot());
-                daysAvailabilityDTO.setWednesdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
-            }
-            //for thursday
-            if(memberAvailability.getThursdayTimeSlot()!=null){
-                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getThursdayTimeSlot());
-                daysAvailabilityDTO.setThursdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
-            }
-            //for friday
-            if(memberAvailability.getFridayTimeSlot()!=null){
-                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getFridayTimeSlot());
-                daysAvailabilityDTO.setFridayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
-            }
-            //for saturday
-            if(memberAvailability.getSaturdayTimeSlot()!=null){
-                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getSundayTimeSlot());
-                daysAvailabilityDTO.setSaturdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
-            }
-            //for sunday
-            if(memberAvailability.getSundayTimeSlot()!=null){
-                List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getSundayTimeSlot());
-                daysAvailabilityDTO.setSundayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow,dayTimeSlots));
-            }
+        try {
+            Long teamid = Long.parseLong(id);
+            Integer meetwindow = Integer.parseInt(meetingWindow);
+            DaysAvailabilityDTO daysAvailabilityDTO = new DaysAvailabilityDTO();
+            //let's get actual availability from back
+            TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(teamid);
+            if (memberAvailability != null) {
+                // first need to deserialize string to list- pass this list to get meeting window timeslot list
+                // only if the string is not null.
+                System.out.println("Team member have availability seted up.");
+                //for monday
+                if (memberAvailability.getMondayTimeSlot() != null) {
+                    System.out.println("Monday Availability present");
+                    List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getMondayTimeSlot());
+                    daysAvailabilityDTO.setMondayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow, dayTimeSlots));
+                }
+                //for tuesday
+                if (memberAvailability.getTuesdayTimeSlot() != null) {
+                    System.out.println("Tuesday Availability present");
+                    List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getTuesdayTimeSlot());
+                    daysAvailabilityDTO.setTuesdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow, dayTimeSlots));
+                }
+                //for wednesday
+                if (memberAvailability.getWednesdayTimeSlot() != null) {
+                    System.out.println("Wednesday Availability present");
+                    List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getWednesdayTimeSlot());
+                    daysAvailabilityDTO.setWednesdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow, dayTimeSlots));
+                }
+                //for thursday
+                if (memberAvailability.getThursdayTimeSlot() != null) {
+                    System.out.println("Thursday Availability present");
+                    List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getThursdayTimeSlot());
+                    daysAvailabilityDTO.setThursdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow, dayTimeSlots));
+                }
+                //for friday
+                if (memberAvailability.getFridayTimeSlot() != null) {
+                    System.out.println("Friday Availability present");
+                    List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getFridayTimeSlot());
+                    daysAvailabilityDTO.setFridayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow, dayTimeSlots));
+                }
+                //for saturday
+//
+                if (memberAvailability.getSaturdayTimeSlot() != null) {
+                    System.out.println("Saturday Availability present");
+                    List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getSundayTimeSlot());
+                    daysAvailabilityDTO.setSaturdayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow, dayTimeSlots));
+                }
+                //for sunday
+                if (memberAvailability.getSundayTimeSlot() != null) {
+                    System.out.println("Sunday Availability present");
+                    List<TimeSlot> dayTimeSlots = deserializeDayTimeSlots(memberAvailability.getSundayTimeSlot());
+                    daysAvailabilityDTO.setSundayTimeSlot(prepareMeetingTimeslotsToShow(meetwindow, dayTimeSlots));
+                }
 
-           return daysAvailabilityDTO;
-        }
-        else{
+                return daysAvailabilityDTO;
+            } else {
+                return null;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
             return null;
         }
     }
+
 
     private List<TimeSlot> deserializeDayTimeSlots(String dayTimeSlots){
         TeamMemberAvailability teamavailibility = new TeamMemberAvailability();
@@ -477,10 +558,13 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         try {
             return teamavailibility.deserializeTimeSlots(dayTimeSlots);
         }catch (Exception e){
-            TimeSlot defaultslot = new TimeSlot(LocalTime.of(9,0),LocalTime.of(17,0));
-            List<TimeSlot> defaultSlotList = new ArrayList<>();
-            defaultSlotList.add(defaultslot);
-            return defaultSlotList;
+            System.out.println("deserialize goes wrong");
+            e.printStackTrace();
+//            TimeSlot defaultslot = new TimeSlot(LocalTime.of(9,0),LocalTime.of(17,0));
+//            List<TimeSlot> defaultSlotList = new ArrayList<>();
+//            defaultSlotList.add(defaultslot);
+//            return defaultSlotList;
+            return null;
         }
     }
 
@@ -494,6 +578,11 @@ public class TeamMemberServiceImpl implements TeamMemberService {
             return null;
         }
     }
+
+    //if timeSlotList is null->
+//    private String updateDayTimeSlotNullorNotNull(List<TimeSlot> timeSlotList){
+//
+//    }
 
     private List<TimeSlot> prepareMeetingTimeslotsToShow(Integer window,List<TimeSlot> dayTimeSlotList){
         List<TimeSlot> meetingSlots = new ArrayList<>();

@@ -2,6 +2,7 @@ package org.nidhishah.meetingscheduler.services;
 
 import org.nidhishah.meetingscheduler.dto.*;
 
+
 import java.util.List;
 
 public interface TeamMemberService {
@@ -28,6 +29,8 @@ public interface TeamMemberService {
 
     //perticular provider (Team member) availability with window timeslots for meeting schedule
     public DaysAvailabilityDTO getTeamMemberMeetingAvail(String meetingwindow,String id);
+
+
 
 
 }

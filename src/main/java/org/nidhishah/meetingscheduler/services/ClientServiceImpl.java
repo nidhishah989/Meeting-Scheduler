@@ -2,10 +2,13 @@ package org.nidhishah.meetingscheduler.services;
 
 import org.modelmapper.ModelMapper;
 import org.nidhishah.meetingscheduler.dto.ClientDTO;
+import org.nidhishah.meetingscheduler.dto.MeetingDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
+import org.nidhishah.meetingscheduler.entity.Meeting;
 import org.nidhishah.meetingscheduler.entity.Organization;
 import org.nidhishah.meetingscheduler.entity.Role;
 import org.nidhishah.meetingscheduler.entity.User;
+import org.nidhishah.meetingscheduler.repository.MeetingRepository;
 import org.nidhishah.meetingscheduler.repository.OrganizationRepository;
 import org.nidhishah.meetingscheduler.repository.UserRepository;
 import org.nidhishah.meetingscheduler.util.CodeGenerator;
@@ -25,14 +28,18 @@ public class ClientServiceImpl implements ClientService {
 
     private final ModelMapper modelMapper;
 
+    private MeetingRepository meetingRepository;
+
     @Autowired
     public ClientServiceImpl(UserRepository userRepository,
                              OrganizationRepository organizationRepository,
-                             RoleServiceImpl roleService, ModelMapper modelMapper) {
+                             RoleServiceImpl roleService, ModelMapper modelMapper,
+                             MeetingRepository meetingRepository) {
         this.userRepository = userRepository;
         this.organizationRepository = organizationRepository;
         this.roleService = roleService;
         this.modelMapper = modelMapper;
+        this.meetingRepository = meetingRepository;
 
     }
 
@@ -89,6 +96,34 @@ public class ClientServiceImpl implements ClientService {
         }catch (Exception e){
             e.printStackTrace();
             throw new Exception("Organization not found. Exception");
+        }
+    }
+
+    @Override
+    public boolean saveClientMeeting(MeetingDTO meetingDTO) {
+        try{
+            //get client from user
+            Optional<User> clientOptional = userRepository.findById(Long.valueOf(meetingDTO.getClientID()));
+            User client = clientOptional.get();
+            //get teammember from user
+            Optional<User> teamMemberOptional = userRepository.findById(Long.valueOf(meetingDTO.getClientID()));
+            User teammember = teamMemberOptional.get();
+            // get organization from org name
+            Optional<Organization> organizationOptinal = organizationRepository.findByOrgName(meetingDTO.getOrganization());
+            Organization organization = organizationOptinal.get();
+            // save those in the meeting entity
+            Meeting meeting = new Meeting();
+            meeting.setClient(client);
+            meeting.setProvider(teammember);
+            meeting.setOrganization(organization);
+            meeting.setMeetingDate(meetingDTO.getMeetingDate());
+            meeting.setMeetingType(meetingDTO.getMeetingType());
+            meeting.setMeetingStartTime(meetingDTO.getTimeslot().getStartTime());
+            meeting.setMeetingEndTIme(meetingDTO.getTimeslot().getEndTime());
+            meetingRepository.save(meeting);
+            return true;
+        }catch (Exception e){
+            return false;
         }
     }
 }
