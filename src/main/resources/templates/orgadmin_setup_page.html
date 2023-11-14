@@ -83,23 +83,37 @@
                     <div class="px-md-5 col-md-6 col-sm-12 adminFname">
                         <label for="firstName" class="form-label">First Name</label>
                         <input type="text" class="form-control" name="firstName" th:field="*{firstName}" id="firstName" placeholder="Admin Last Name"
-                               required="">
+                               >
+                        <div th:if="${#fields.hasErrors('firstName')}" class="alert alert-danger">
+                            <p th:text="${#fields.errors('firstName')}"></p>
+                        </div>
                     </div>
                     <div class="px-md-5 col-md-6 col-sm-12 adminLname">
                         <label for="lastName" class="form-label">Last Name</label>
                         <input type="text" class="form-control" name="lastName" th:field="*{lastName}" id="lastName" placeholder="Admin First Name"
                                required="">
+                        <!-- Validation div for lastName -->
+                        <div th:if="${#fields.hasErrors('lastName')}" class="alert alert-danger">
+                            <p th:text="${#fields.errors('lastName')}"></p>
+                        </div>
                     </div>
                     <div class="px-md-5 col-md-8 col-sm-12">
                         <label for="adminEmail" class="form-label">Email</label>
                         <input type="email" class="form-control" id="adminEmail" name="adminEmail" th:field="*{email}"
                                placeholder="Admin Email address: username@domain.com" required="">
                         <span id="emailValidationMessage" style="color: red;"></span>
+                        <div th:if="${#fields.hasErrors('email')}" class="alert alert-danger">
+                            <p th:text="${#fields.errors('email')}"></p>
+                        </div>
                     </div>
                     <div class="px-md-5 col-md-6 col-sm-12 adminpassword1">
                         <label for="password1" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password1"  name="password" required="">
                         <span id="passwordValidationMessage" style="color: red;"></span>
+                        <!-- Validation div for password -->
+                        <div th:if="${#fields.hasErrors('password')}" class="alert alert-danger">
+                            <p th:text="${#fields.errors('password')}"></p>
+                        </div>
                     </div>
                     <div class="px-md-5 col-md-6 col-sm-12 adminpassword2">
                         <label for="password2" class="form-label">Confirm Password</label>

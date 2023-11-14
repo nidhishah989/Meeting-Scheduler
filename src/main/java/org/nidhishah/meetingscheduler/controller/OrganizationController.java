@@ -1,11 +1,16 @@
 package org.nidhishah.meetingscheduler.controller;
 
+import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
+import jakarta.validation.Valid;
 import org.nidhishah.meetingscheduler.dto.OrganizationDTO;
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
 import org.nidhishah.meetingscheduler.dto.UserDTO;
+
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.OrganizationService;
 import org.nidhishah.meetingscheduler.services.TeamMemberService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +28,7 @@ public class OrganizationController {
     private TeamMemberService teamMemberService;
     private final OrganizationService organizationService;
 
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationController.class.getName());
     @Autowired
     public OrganizationController(TeamMemberService teamMemberService,
                                   OrganizationService organizationService) {
@@ -41,15 +47,25 @@ public class OrganizationController {
     }
 
     @PostMapping("/orgsetupprocess")
-    public String processOrgSetup(@ModelAttribute ("teammember") UserDTO userDTO,
+    public String processOrgSetup(@Valid @ModelAttribute ("teammember") UserDTO userDTO,
                                   BindingResult bindingResult,
                                   @ModelAttribute ("organization") OrganizationDTO organizationDTO,
-                                  BindingResult bindingResultOrganization, Model model)
+                                   Model model)
     {
+        // Validate UserDTO
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(error -> {
+                System.out.println(error.getDefaultMessage());
+                logger.error(error.getDefaultMessage());
+            });
+            // Handle validation errors for UserDTO
+            return "orgadmin_setup_page";
+        }
         try{
             teamMemberService.registerAdmin(userDTO, organizationDTO);
             return "redirect:/" + "setorgdetail/"+ organizationDTO.getOrgName() ;
-        }catch (Exception e){
+        }catch( Exception e){
+
             String errormessage = "Organization setup failed. The provided organization name is already in use.";
             System.out.println(errormessage);
              model.addAttribute("errorMessage",errormessage);
@@ -91,7 +107,7 @@ public class OrganizationController {
 
     @PostMapping("/process-orgdetailsetup")
     public String processOrgDetailAddition(@ModelAttribute(name="organization") OrganizationDTO organizationDTO,
-                                           BindingResult bindingResult, Model model)
+                                           Model model)
     {
         try{
             //access the authenticated user information

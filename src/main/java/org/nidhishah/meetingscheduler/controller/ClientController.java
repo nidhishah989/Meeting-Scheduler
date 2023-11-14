@@ -1,10 +1,13 @@
 package org.nidhishah.meetingscheduler.controller;
 
 import org.nidhishah.meetingscheduler.dto.*;
+import org.nidhishah.meetingscheduler.exception.OrganizationNotFoundException;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.ClientServiceImpl;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
 import org.nidhishah.meetingscheduler.services.UserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +24,8 @@ public class ClientController {
     private UserServiceImpl userService;
     private ClientServiceImpl clientService;
     private TeamMemberServiceImpl teamMemberService;
+
+    private static final Logger logger = LoggerFactory.getLogger(ClientController.class.getName());
     @Autowired
     public ClientController(UserServiceImpl userService, ClientServiceImpl clientService
                             ,TeamMemberServiceImpl teamMemberService) {
@@ -64,7 +69,8 @@ public class ClientController {
 
             }
 
-        }catch (Exception e){
+        }catch (OrganizationNotFoundException e){
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
 

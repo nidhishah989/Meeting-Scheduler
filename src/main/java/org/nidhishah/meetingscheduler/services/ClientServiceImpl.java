@@ -13,6 +13,7 @@ import org.nidhishah.meetingscheduler.entity.Meeting;
 import org.nidhishah.meetingscheduler.entity.Organization;
 import org.nidhishah.meetingscheduler.entity.Role;
 import org.nidhishah.meetingscheduler.entity.User;
+import org.nidhishah.meetingscheduler.exception.OrganizationNotFoundException;
 import org.nidhishah.meetingscheduler.repository.MeetingRepository;
 import org.nidhishah.meetingscheduler.repository.OrganizationRepository;
 import org.nidhishah.meetingscheduler.repository.UserRepository;
@@ -66,7 +67,7 @@ public class ClientServiceImpl implements ClientService {
      * */
 
     @Override
-    public void registerNewClient(NewOrgMemberDTO newOrgMemberDTO, String organization) throws Exception {
+    public void registerNewClient(NewOrgMemberDTO newOrgMemberDTO, String organization) throws OrganizationNotFoundException {
         //get organization
         try{
             System.out.println("............IN registerNEwTeamMember.......................");
@@ -100,7 +101,7 @@ public class ClientServiceImpl implements ClientService {
             }
         }catch (Exception e){
             e.printStackTrace();
-            throw new Exception("Organization not found. Exception");
+            throw new OrganizationNotFoundException("Organization not found. Exception");
         }
     }
 
