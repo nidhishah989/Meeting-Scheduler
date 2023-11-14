@@ -84,12 +84,12 @@
                         <div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="onSite" name="meetingType"
-                                       value="OnSite" th:field="*{onSiteMeetingAvailable}">
+                                       value="OnSite" th:field="*{onSiteMeetingAvailable}" th:checked="*{onSiteMeetingAvailable}">
                                 <label class="form-check-label" for="onSite">OnSite</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="zoom" name="meetingType"
-                                       value="Zoom" th:field="*{zoomMeetingAvailable}" >
+                                       value="Zoom" th:field="*{zoomMeetingAvailable}" th:checked="*{zoomMeetingAvailable}">
                                 <label class="form-check-label" for="zoom">Zoom</label>
                             </div>
                         </div>

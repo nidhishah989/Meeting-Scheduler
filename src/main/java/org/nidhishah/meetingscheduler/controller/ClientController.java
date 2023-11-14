@@ -162,7 +162,7 @@ public class ClientController {
     }
 
     @PostMapping("/meetingschedule/{id}")
-    public void setClientMeeting(@ModelAttribute(name="selectedDate") String meetingdate,
+    public String setClientMeeting(@ModelAttribute(name="selectedDate") String meetingdate,
                                  @ModelAttribute(name="selectedMeetingType")String meetingType,
                                  @ModelAttribute(name="selectedTimeSlot") String meetingslot,
                                  @ModelAttribute(name="selectedDay") String meetingDay,
@@ -204,7 +204,7 @@ public class ClientController {
                 //if success- change teammember availability
                 if (clientService.saveClientMeeting(meetingDTO)) {
                     redirectAttributes.addFlashAttribute("success","Your Meeting has been scheduled with ");
-
+                    return "redirect:/client-dashboard";
                 } else {
                     throw new Exception();
                 }
@@ -212,7 +212,18 @@ public class ClientController {
             }
         }catch (Exception e){
             // return the meeting page again...
-        }
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error","Something went wrong! Try Again!");
 
+        }
+        return "redirect:/client-dashboard";
+    }
+
+    @GetMapping("/client-dashboard")
+    public String getClientDashboard(@ModelAttribute(name="success") String success,
+                                     @ModelAttribute(name="error")String error, Model model){
+        model.addAttribute("success",success);
+        model.addAttribute("error",error);
+        return "client_dashboard_page";
     }
 }

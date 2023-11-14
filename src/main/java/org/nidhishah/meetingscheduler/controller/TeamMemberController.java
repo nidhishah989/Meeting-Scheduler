@@ -5,6 +5,8 @@ import org.nidhishah.meetingscheduler.dto.DaysAvailabilityDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
 import org.nidhishah.meetingscheduler.dto.TimeSlot;
+import org.nidhishah.meetingscheduler.entity.TeamMemberExtraInfo;
+import org.nidhishah.meetingscheduler.repository.TeamMemberExtraInfoRepository;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
 import org.nidhishah.meetingscheduler.services.UserServiceImpl;
@@ -28,10 +30,14 @@ public class TeamMemberController {
 
     private UserServiceImpl userService;
     private TeamMemberServiceImpl teamMemberService;
+
+    private TeamMemberExtraInfoRepository teamMemberExtraInfoRepository;
     @Autowired
-    public TeamMemberController(UserServiceImpl userService, TeamMemberServiceImpl teamMemberService) {
+    public TeamMemberController(UserServiceImpl userService, TeamMemberServiceImpl teamMemberService,
+                                TeamMemberExtraInfoRepository teamMemberExtraInfoRepository) {
         this.userService = userService;
         this.teamMemberService = teamMemberService;
+        this.teamMemberExtraInfoRepository = teamMemberExtraInfoRepository;
     }
 
     @PostMapping("/addteammember")
@@ -85,7 +91,15 @@ public class TeamMemberController {
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
                 //organization information collection
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                // check if there is extra information already there for teammember
+                //if so map it to DTO
+                TeamMemberExtraInfo teamMemberExtraInfo =teamMemberExtraInfoRepository.getTeamMemberExtraInfoByUser_Id(userPrincipal.getUserId());
                 TeamMemberDTO teamMemberDTO = new TeamMemberDTO();
+                if (teamMemberExtraInfo !=null){
+                    teamMemberDTO.setOnSiteMeetingAvailable(teamMemberExtraInfo.isOnSiteMeetingAvailable());
+                    teamMemberDTO.setZoomMeetingAvailable(teamMemberExtraInfo.isZoomMeetingAvailable());
+                }
+
                 teamMemberDTO.setOrgName(userPrincipal.getOrganizationName());
                 // if teammember have the availability get them or get default one
                 DaysAvailabilityDTO availabilityDTO = teamMemberService.getTeamMemberAvailability(userPrincipal.getUsername(),userPrincipal.getOrganizationName());
