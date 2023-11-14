@@ -1,7 +1,24 @@
-# Meetsy - Meeting Scheduler Platform
+# Meetsy - Modern Meeting Scheduler
 
 ## Description
-Meetsy is a Meeting Scheduler Platform that simplifies the process of scheduling meetings for organizations. It provides a seamless experience for both teams and clients, allowing efficient organization management and hassle-free meeting scheduling.
+Welcome to Meetsy, your go-to solution for revolutionizing meeting coordination. Meetsy is more than just a scheduler; it's a sophisticated platform designed to simplify and enhance your entire meeting experience. Whether you're a team member, administrator, or client, Meetsy ensures that scheduling meetings becomes a seamless and enjoyable process.
+
+## Key Features
+
+### 1. **Effortless Meeting Setup:**
+- Configure your meeting availability effortlessly, tailoring it to your preferences with diverse meeting types and intuitive time zone selections.
+
+### 2. **Intuitive User Interface:**
+- Navigate through Meetsy's user-friendly interface, providing a smooth and enjoyable experience for every user.
+
+### 3. **Team Collaboration Simplified:**
+- Elevate team collaboration by centralizing availability, meeting types, and schedules within a unified and accessible platform.
+
+### 4. **Client-Centric Scheduling:**
+- Clients experience hassle-free meeting scheduling with team members, eliminating the need for lengthy email exchanges and tedious coordination.
+
+### 5. **Security as a Priority:**
+- Meetsy prioritizes the security of your data, integrating Spring Security to ensure the confidentiality and integrity of your meeting information.
 
 ## Steps to Setup
 
