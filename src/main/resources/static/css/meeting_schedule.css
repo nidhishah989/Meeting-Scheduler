@@ -60,11 +60,15 @@ body {
 .calendar-day::selection{
     background-color: #315a70;
 }
-.current-day {
+.calendar-day.current-day {
     background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
     color: #fff;
     font-weight: bold;
     border-radius: 10px;
+}
+.calendar-day.disabled{
+    color: #999; /* Lighter color for disabled dates */
+    cursor: not-allowed; /* Change cursor to indicate non-selectable */
 }
 
 .calendar-footer {

@@ -20,11 +20,27 @@ function generateCalendar() {
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
-        if (day === currentDate.getDate() && currentMonth === currentDate.getMonth() && currentYear === currentDate.getFullYear()) {
+        const currentDateCheck = new Date(currentYear, currentMonth, day);
+        const isToday = currentDateCheck.toDateString() === currentDate.toDateString();
+        const isBeforeCurrentDate = currentDateCheck < currentDate;
+
+        if (isToday) {
             calendarContent += `<div class="calendar-day current-day" onclick="setSelectedDate(${day})">${day}</div>`;
+        } else if (isBeforeCurrentDate) {
+            calendarContent += `<div class="calendar-day disabled" onclick="setSelectedDate(${day})">${day}</div>`;
         } else {
-            calendarContent += `<div class="calendar-day"  onclick="setSelectedDate(${day})">${day}</div>`;
+            calendarContent += `<div class="calendar-day otherday"  onclick="setSelectedDate(${day})">${day}</div>`;
         }
+        // const currentDateCheck = new Date(currentYear, currentMonth, day);
+        // const isBeforeCurrentDate = currentDateCheck < currentDate;
+        //
+        // if (isBeforeCurrentDate) {
+        //     calendarContent += `<div class="calendar-day disabled">${day}</div>`;
+        // } else if (day === currentDate.getDate() && currentMonth === currentDate.getMonth() && currentYear === currentDate.getFullYear()) {
+        //     calendarContent += `<div class="calendar-day current-day" onclick="setSelectedDate(${day})">${day}</div>`;
+        // } else {
+        //     calendarContent += `<div class="calendar-day"  onclick="setSelectedDate(${day})">${day}</div>`;
+        // }
     }
 
     calendarBody.innerHTML = calendarContent;
