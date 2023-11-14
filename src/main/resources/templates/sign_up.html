@@ -1,4 +1,4 @@
-
+<!---NIDHI SHAH --->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"></html>
 <html lang="en">
@@ -53,6 +53,7 @@
 
 </head>
 <body>
+<!------------------------------MAIN PAGE---------------------------------------->
 <section class="h-100 gradient-form" style="background-color: #eee;">
     <div class="container py-2 h-100">
         <div class="row justify-content-center align-items-center h-100">
@@ -68,6 +69,7 @@
                             </div>
                         </div>
                         <!---->
+                        <!------------------------------SIGN UP FORM---------------------------------------->
                         <div class="col-lg-6" th:object="${signupuser}">
                             <div th:if="${error}" class="alert alert-danger alert-dismissible fade show py-1 my-2" role="alert">
                                 <span th:text="${error}"></span>
@@ -107,7 +109,7 @@
                                             <label class="form-label" for="password2">Confirm Password</label>
                                             <input type="password" id="password2" name="confirmpassword1" class="form-control" required />
                                         </div>
-                                            <span class="mx-md-5 mt-1">Use 8-12 characters with mix of letters, numbers & special symbol.</span>
+                                            <span >Use 8-12 characters with mix of letters, numbers & special symbol.</span>
                                         </div>
                                         <div class="form-outline mb-3 col-12">
                                             <label class="form-label" for="organization">Organization Name</label>

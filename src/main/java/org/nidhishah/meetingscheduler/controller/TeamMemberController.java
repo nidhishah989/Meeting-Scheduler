@@ -159,4 +159,9 @@ public class TeamMemberController {
         }
         return "redirect:/availability_setup";
     }
+
+    @GetMapping("/team-dashboard")
+    public String getTeamMemberDashboard(){
+        return "teammember_page";
+    }
 }

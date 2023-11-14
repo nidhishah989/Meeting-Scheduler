@@ -1,3 +1,4 @@
+/****************LOGIN + SIGN UP +REDIRECT - NIDHI SHAH *************/
 package org.nidhishah.meetingscheduler.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -6,7 +7,6 @@ import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.OrganizationServiceImpl;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
 import org.nidhishah.meetingscheduler.services.UserServiceImpl;
-//import org.nidhishah.meetingscheduler.services.UserSignUpServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,6 @@ public class LoginController {
     private OrganizationServiceImpl organizationService;
     private UserServiceImpl userService;
 
-//    private final UserSignUpServiceImpl userSignUpService;
     private TeamMemberServiceImpl teamMemberService;
 
     @Autowired
@@ -41,52 +40,51 @@ public class LoginController {
         this.userService = userService;
         this.teamMemberService = teamMemberService;
     }
-
+   ////////////////////   ---> LOGIN FORM <-----
     @GetMapping("/login")
     public String getLoginPage()
     {
+        logger.info("USER OPEN THE LOGIN PAGE.");
         return "login";
     }
 
-
-//    @PostMapping("/login")
-//    public String loginprocess()
-//    {
-//        return "file";
-//    }
-
+    ////////////////////   ---> SIGN UP FORM <-----
     @GetMapping("/signup")
     public String getSignUpPage(Model model,@ModelAttribute(name="Error") String Error){
+        logger.info("USER IS FETCHING SIGN UP FORM.");
       //pass the logindto
       model.addAttribute("signupuser",new SignUPDTO());
       //if error is not empty - add it
       if(!Error.isEmpty()){
-          System.out.println("Error: "+ Error);
+          logger.error("SIGN UP ERROR PASSED FROM POST MAPPING:" + Error);
           model.addAttribute("error",Error);
       }
       return "sign_up";
     }
 
+    ////////////////////   ---> SIGN UP PROCESS <-----
     @PostMapping("/signup")
     public String processSignUp(@ModelAttribute(name="signupuser") SignUPDTO signUPDTO,
                                 RedirectAttributes redirectAttributes){
         try {
-            System.out.println("Sign up email: " + signUPDTO.getEmail());
-            System.out.println("Sign up temppasscode: " + signUPDTO.getTempPasccode());
-            System.out.println("Sign up organization: " + signUPDTO.getOrganization());
+            logger.info("USER SIGNUP DATA GETTING PROCESS.");
             // Check organization presents.
             if(organizationService.findByOrgName(signUPDTO.getOrganization())!= null) {
+                logger.info("ORGANIZATION FOUND....");
                 //find user already there for given organization
                 if (userService.findUserByEmailAndOrganization(signUPDTO.getEmail(), signUPDTO.getOrganization())) {
                     // complete signup process - if not empty- as per rolename returned, redirect user
-                    System.out.println("SIgn UP user Password::"+signUPDTO.getPassword());
+                    logger.info("USER DATA FOUND WITHIN GIVEN ORGANIZATION....");
                     String roleName = teamMemberService.completeUserSignUpProcess(signUPDTO);
                     if (!roleName.isEmpty()) {
+                        logger.info("USER ROLE IS : "+ roleName);
                         if (roleName.equals("teammember")) {
+                            logger.info("REDIRECTING FOR AVAILABILITY SETUP..");
                             //redirect for availability setup
                             return "redirect:/availability_setup";
                         } else if (roleName.equals("client")) {
                             //redirect for meeting schedule page
+                            logger.info("REDIRECTING FOR MEETING SCHEDULE..");
                             return "redirect:/meeting_schedule";
                         }
                     }
@@ -96,13 +94,13 @@ public class LoginController {
             throw new Exception();
         }catch (Exception e){
             //add message and show sign up page again
-            System.out.println("Unsuccessful Sign up");
+            logger.error("USER SIGN UP UNSUCCESSFUL. REDIRECT TO SIGNUP WITH MESSAGE..");
             redirectAttributes.addFlashAttribute("Error","Unsuccessful Sign Up. Confirm your information. Already Sign Up! Login");
         }
         return "redirect:/signup";
     }
 
-
+    ////////////////////   ---> REDIRECT AFTER LOGIN SUCCESS <-----
     @RequestMapping("/findwhertogo")
     public String chooseRedirectBasedOnRole(HttpServletRequest request) {
         logger.debug("::Redirect URL Controller called::");
@@ -134,7 +132,7 @@ public class LoginController {
                 }
                 //if teammember - open teammember page
                 else if (role.equals("teammember")) {
-                    return "teammember_page";
+                    return "redirect:/team-dashboard";
                 }
                 //if client - open client page
                 else if (role.equals("client")) {
