@@ -1,3 +1,16 @@
+/*************
+ * Team Member Service for Admin, Team Member for each organization
+ * Set Org and admin - Exception
+ * get List of team members - list of teammemberDTO
+ * Register new team member - if org is there / exception
+ * Complete client or team member signup process based on isenable, temppasscode: role return or ""
+ * get team member availability based on id... only fetch available days
+ * set , update ,delete availability --> old-> update or delete, new--> set availability : null exception
+ *   (also set, update and delete teammemberextra info
+ * get all available providers : list / null
+ * get team member extra information for meeting
+ * prepare meeting windows...
+ */
 package org.nidhishah.meetingscheduler.services;
 
 import org.modelmapper.ModelMapper;
@@ -53,6 +66,13 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         this.teamMemberExtraInfoRepository= teamMemberExtraInfoRepository;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// Register Admin - if and only if organization is not set before........
+    //////////////////////                  unique organization - unique admin ....................
+    /////////////////////                   call orgrepo to save first org.....................
+    /////////////////////                   user repo to save admin - password encrypted
+    ////////////////////                    if org is already there means admin is there= throw Exception
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void registerAdmin(UserDTO userDTO, OrganizationDTO organizationDTO) throws Exception {
         // Call organization service for init org setup
@@ -88,40 +108,45 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         }
 
     }
+//
+//    @Override
+//    public List<TeamMemberDTO> getTeamMembersByOrganization(String organization) {
+//        // get teammembers list of objects from database
+//        List<Object[]> teamMemberObjects = userRepository.findUsersByOrganizationNameAndRole(organization);
+//        //map it to teammemberDTO
+//        List<TeamMemberDTO> teamMemberList = new ArrayList<>();
+//
+//        // Define a custom mapping configuration
+//        modelMapper.typeMap(Object[].class, TeamMemberDTO.class)
+//                .addMappings(mapping -> {
+//                    mapping.map(src -> (String)src[0], TeamMemberDTO::setFirstName);
+//                    mapping.map(src -> (String)src[1], TeamMemberDTO::setLastName);
+//                    mapping.map(src -> (String)src[2], TeamMemberDTO::setRoleName);
+//                    mapping.map(src -> (String)src[3], TeamMemberDTO::setOrgName);
+//                });
+//
+//        if(!teamMemberObjects.isEmpty()) {
+//            for (Object[] memberObject : teamMemberObjects) {
+//                System.out.println(Arrays.toString(memberObject));
+//                System.out.println(memberObject[0]);
+//
+//                TeamMemberDTO teamMember = modelMapper.map(memberObject, TeamMemberDTO.class);
+//                System.out.println("$$$$$$$$$$$$$$$$$$$$: "+ teamMember);
+//                teamMemberList.add(teamMember);
+//            }
+//            return teamMemberList;
+//        }
+//        else {
+//            System.out.println("Object is Empty????????????????????/");
+//            return null;
+//        }
+//    }
 
-    @Override
-    public List<TeamMemberDTO> getTeamMembersByOrganization(String organization) {
-        // get teammembers list of objects from database
-        List<Object[]> teamMemberObjects = userRepository.findUsersByOrganizationNameAndRole(organization);
-        //map it to teammemberDTO
-        List<TeamMemberDTO> teamMemberList = new ArrayList<>();
-
-        // Define a custom mapping configuration
-        modelMapper.typeMap(Object[].class, TeamMemberDTO.class)
-                .addMappings(mapping -> {
-                    mapping.map(src -> (String)src[0], TeamMemberDTO::setFirstName);
-                    mapping.map(src -> (String)src[1], TeamMemberDTO::setLastName);
-                    mapping.map(src -> (String)src[2], TeamMemberDTO::setRoleName);
-                    mapping.map(src -> (String)src[3], TeamMemberDTO::setOrgName);
-                });
-
-        if(!teamMemberObjects.isEmpty()) {
-            for (Object[] memberObject : teamMemberObjects) {
-                System.out.println(Arrays.toString(memberObject));
-                System.out.println(memberObject[0]);
-
-                TeamMemberDTO teamMember = modelMapper.map(memberObject, TeamMemberDTO.class);
-                System.out.println("$$$$$$$$$$$$$$$$$$$$: "+ teamMember);
-                teamMemberList.add(teamMember);
-            }
-            return teamMemberList;
-        }
-        else {
-            System.out.println("Object is Empty????????????????????/");
-            return null;
-        }
-    }
-
+    /*********** /////////////////////////////////////////////////////////////////////////
+    ////////////////for list of team members in admin page.............................
+    /////////////// organization is already there -cause this is getting access by organization admin
+    /////////////// Atleast admin is there.
+    //////////////////////////////////////////////////////////////////////***********/
     @Override
     public List<TeamMemberDTO> getTeamMembersByOrgName(String organization) {
         // get from repository:
@@ -133,6 +158,11 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         return teamMemberDTOList;
     }
 
+    /************ //////////////////////////////////////////////////////////////////////////////
+    ////////////////// Register new Team member- not admin, just team member...........
+    /////////////////  Only if given information is not already present as client, team member or admin
+    ///////////////// Make team member inactive ........
+    //////////////////////////////////////////////////////////////////////////********///
     @Override
     public void registerNewTeamMember(NewOrgMemberDTO newOrgMemberDTO, String organization) throws Exception{
 
@@ -173,10 +203,12 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         }
     }
 
-    /*
-     * ********** If sign up person is not admin-> complete Sign Up process
-     * *********** return rolename or empty string
-     * */
+    /********** ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////If sign up person is not admin : -> complete Sign Up process
+    /////////////////////////// for team member and client (data is present is already checked before this call)
+    //////////////////////////// if isenable is false, if temp passcode match with data
+    //////////////////// return rolename or empty string
+    /////////////////////////////////////////////////////////////////////////**************/
     @Override
     public String completeUserSignUpProcess(SignUPDTO signUPDTO) {
         //check the user
@@ -210,11 +242,13 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         return "";
     }
 
-    ///////////////////// TEAM MEMBER AVAILABILITY SETUP FOR SETAVAILABILITY FORM /////
-    /*  If teammeber entry(check by id) in the availability - fetch availability
-    *    If no entry: create default timeslot of 9:00 am to 17:00(5:00 PM) for each day
-    *    at the end return the DTO
+    //////////////////////////////////////////////////////////////////////////////////
+    /********* TEAM MEMBER AVAILABILITY SETUP FOR SETAVAILABILITY FORM
+    *********  If teammeber entry(check by id) in the availability - fetch availability only which is present
+    *********  If no entry: create default timeslot of 9:00 am to 17:00(5:00 PM) for each day
+    *********  at the end return the DTO
      */
+    //////////////////////////////////////////////////////////////////////////////////
     @Override
     public DaysAvailabilityDTO getTeamMemberAvailability(String username, String organization) {
         //empty dto
@@ -239,7 +273,6 @@ public class TeamMemberServiceImpl implements TeamMemberService {
                 availabilityDTO.setThursdayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getThursdayTimeSlot()));
             }
             if(teamMemberAvailability.getFridayTimeSlot() !=null) {
-                System.out.println("@@@@@@@@@@@@@@@updating FRIDAY@@@@@@@@@@@@@@@@");
                 availabilityDTO.setFridayTimeSlot(deserializeDayTimeSlots(teamMemberAvailability.getFridayTimeSlot()));
             }
             if(teamMemberAvailability.getSaturdayTimeSlot() !=null) {
@@ -450,10 +483,10 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         return availableMemberList;
     }
 
-    //just gather team member infor: first name, last name, organization,
+    /********** just gather team member info: first name, last name, organization,
     // meeting type list, meeting window, timezone
     //user is already in database, however, if is not teammember or admin
-    // or is not enable yet or user with such id not found
+    // or is not enable yet or user with such id not found **********/
     @Override
     public TeamMemberDTO getTeamMemberInfoById(String Id) {
         TeamMemberDTO teamMemberDTO = new TeamMemberDTO();
@@ -483,8 +516,9 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         }
     }
 
-    //teammember information is already checked befor this call,
+    /*********** teammember information is already checked befor this call,
     //Convert each availability in the form of meeting window gap and return the availability DTO
+     **********/
     @Override
     public DaysAvailabilityDTO getTeamMemberMeetingAvail(String meetingWindow, String id) {
         try {
@@ -551,7 +585,7 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         }
     }
 
-
+    // deserialize : from string to list
     private List<TimeSlot> deserializeDayTimeSlots(String dayTimeSlots){
         TeamMemberAvailability teamavailibility = new TeamMemberAvailability();
         //if deserialize throw exception, just put default one
@@ -560,14 +594,12 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         }catch (Exception e){
             System.out.println("deserialize goes wrong");
             e.printStackTrace();
-//            TimeSlot defaultslot = new TimeSlot(LocalTime.of(9,0),LocalTime.of(17,0));
-//            List<TimeSlot> defaultSlotList = new ArrayList<>();
-//            defaultSlotList.add(defaultslot);
-//            return defaultSlotList;
+
             return null;
         }
     }
 
+    //serialize : from list to string
     private String serializeDayTimeSlots(List<TimeSlot> timeSlotList){
         TeamMemberAvailability teamavailibility = new TeamMemberAvailability();
         //if serialize throw exception,just put null
@@ -579,11 +611,8 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         }
     }
 
-    //if timeSlotList is null->
-//    private String updateDayTimeSlotNullorNotNull(List<TimeSlot> timeSlotList){
-//
-//    }
 
+    /// for meeting window list for client to set meeting
     private List<TimeSlot> prepareMeetingTimeslotsToShow(Integer window,List<TimeSlot> dayTimeSlotList){
         List<TimeSlot> meetingSlots = new ArrayList<>();
         for (TimeSlot slot : dayTimeSlotList) {

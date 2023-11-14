@@ -1,3 +1,9 @@
+/*******
+ * Organization Service:
+ * update organization detail
+ * find organization is there or not by organization name(unique)
+ * By Nidhi Shah
+ */
 package org.nidhishah.meetingscheduler.services;
 
 import org.modelmapper.ModelMapper;
@@ -22,6 +28,7 @@ public class OrganizationServiceImpl implements OrganizationService{
         this.modelMapper = modelMapper;
     }
 
+    //Organization is already saved-> update it's information and return true else false
     @Override
     public boolean setOrganizationDetail(OrganizationDTO organizationDTO) {
         String organizationname= organizationDTO.getOrgName();
@@ -49,6 +56,7 @@ public class OrganizationServiceImpl implements OrganizationService{
     }
 
 
+    // find organization by organizatio name - found -> return else return null
     @Override
     public OrganizationDTO findByOrgName(String organization) {
         organization = organization.toLowerCase();

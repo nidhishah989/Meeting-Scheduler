@@ -1,3 +1,11 @@
+/*****
+ * UserService on UserDetailService :
+ * Customized loadUserByUsername
+ * Customized finding user by email and username
+ * Note: role are already saved when application start
+ * By Nidhi Shah
+ */
+
 package org.nidhishah.meetingscheduler.services;
 
 import org.nidhishah.meetingscheduler.entity.User;

@@ -1,3 +1,12 @@
+/*****
+ * UserService on UserDetailService :
+ * Customized loadUserByUsername : make sure pass userPrincipal by finding user by organization and username
+ * Used Request parameter set by security filter
+ * One method: to find user by email and organization name
+ * Note: role are already saved when application start
+ * By Nidhi Shah
+ */
+
 package org.nidhishah.meetingscheduler.services;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,11 +44,6 @@ public class UserServiceImpl implements UserService{
 
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username, String organization) {
-//
-//        return null;
-//    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("In loaduserbyusername");
@@ -71,12 +75,12 @@ public class UserServiceImpl implements UserService{
     }
 
 
-    private Collection<? extends GrantedAuthority> mapStringToAuthorities(String customAuthority) {
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(customAuthority));
-        return authorities;
-
-    }
+//    private Collection<? extends GrantedAuthority> mapStringToAuthorities(String customAuthority) {
+//        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+//        authorities.add(new SimpleGrantedAuthority(customAuthority));
+//        return authorities;
+//
+//    }
 
     @Override
     public boolean findUserByEmailAndOrganization(String email, String organization) {

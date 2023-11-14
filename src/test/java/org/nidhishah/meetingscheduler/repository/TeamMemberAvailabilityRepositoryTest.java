@@ -1,7 +1,10 @@
 package org.nidhishah.meetingscheduler.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.*;
 import org.nidhishah.meetingscheduler.dto.TimeSlot;
+import org.nidhishah.meetingscheduler.entity.Organization;
+import org.nidhishah.meetingscheduler.entity.Role;
 import org.nidhishah.meetingscheduler.entity.TeamMemberAvailability;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/************
+ * Test TImeAvailability by setting one teammember availability
+ * Specially test serialization and deserialization
+ */
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TeamMemberAvailabilityRepositoryTest {
@@ -20,17 +27,79 @@ public class TeamMemberAvailabilityRepositoryTest {
     UserRepository userRepository;
 
     @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    OrganizationRepository organizationRepository;
+
+    @Autowired
     TeamMemberAvalibilityRepository teamMemberAvalibilityRepository;
-    //////////////////////////////////////////////////////////////////////////
-    //////// May be need to do before for setting organization teammember or admin before testing /////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    // Testing the serializer for timeslot saving and deserializer for timeslot retrieving with testing entity save and retrieve functionality
-    ////////////////// Only for Monday ////////////////////////////////////////
-    // Note: this will be good if there is not timeslot for monday there. _ initital testing
     @Test
     @Order(1)
+    public void Setup(){
+        //first set organization
+        Organization testOrganization = new Organization();
+        testOrganization.setOrgName("testOrg2");
+        testOrganization.setOrgDescription("Test Description");
+        testOrganization.setOrgAddress1("123 Test St");
+        testOrganization.setOrgAddress2("Suite 100");
+        testOrganization.setOrgCity("Test City");
+        testOrganization.setOrgState("Test State");
+        testOrganization.setOrgCountry("Test Country");
+        testOrganization.setOrgContact("1234567890");
+        organizationRepository.save(testOrganization);
+        //get all role instances
+        Role adminRole = roleRepository.findByRoleName("admin");
+        Role teamMemberRole = roleRepository.findByRoleName("teammember");
+        Role clientRole = roleRepository.findByRoleName("client");
+
+        //save admin, teammember, client of test organization
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setPassword("admin");
+        admin.setRole(adminRole);
+        admin.setFirstName("admin");
+        admin.setLastName("lastname");
+        admin.setEmail("admin@test.com");
+        admin.setEnabled(true);
+        admin.setOrganization(testOrganization);
+        userRepository.save(admin);
+
+        //teammember 1
+        User teamMember1 = new User();
+        teamMember1.setUsername("team1");
+        teamMember1.setPassword("password");
+        teamMember1.setRole(teamMemberRole);
+        teamMember1.setFirstName("team1");
+        teamMember1.setLastName("test");
+        teamMember1.setEmail("team1@test.com");
+        teamMember1.setEnabled(true);
+        teamMember1.setOrganization(testOrganization);
+        userRepository.save(teamMember1);
+        //add timeslots for teammember1
+        TeamMemberAvailability teamMemberAvailability = new TeamMemberAvailability();
+        teamMemberAvailability.setTeammember(teamMember1);
+        // Create a list of timeslots
+        TimeSlot timeSlot1 = new TimeSlot(LocalTime.of(9, 0), LocalTime.of(12, 0));
+        TimeSlot timeSlot2 = new TimeSlot(LocalTime.of(13, 0), LocalTime.of(16, 0));
+
+        List<TimeSlot> timeSlotList = new ArrayList<>();
+        timeSlotList.add(timeSlot1);
+        timeSlotList.add(timeSlot2);
+        //set teammemberavailability
+        try {
+            teamMemberAvailability.setMondayTimeSlot(teamMemberAvailability.serializeTimeSlots(timeSlotList));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    // check admin mondayTimeSlots getting saved and retrieved same
+    @Test
+    @Order(2)
     public void saveMondayTimeSlotTest(){
 
         // Create a list of timeslots
@@ -40,16 +109,16 @@ public class TeamMemberAvailabilityRepositoryTest {
         List<TimeSlot> timeSlotList = new ArrayList<>();
         timeSlotList.add(timeSlot1);
         timeSlotList.add(timeSlot2);
-
+        //get teammember
+        User teammember = userRepository.findByUsernameAndOrganizationOrgName("admin","testOrg2");
+        System.out.println("In saving teammemberAvailability Test: TeamMember UserName: " + teammember.getUsername());
         //TeamMemberAvailability save
         TeamMemberAvailability teamMemberAvailability = new TeamMemberAvailability();
         try {
             System.out.println("Let's Serialize list first.....");
             String mondayTimeSlotStr = teamMemberAvailability.serializeTimeSlots(timeSlotList);
             System.out.println("In saving teammemberAvailability Test: SerializedMondayTimeSlots string : "+ mondayTimeSlotStr);
-            //get teammember
-            User teammember = userRepository.findByUsernameAndOrganizationOrgName("nidhishah989","meetsy");
-            System.out.println("In saving teammemberAvailability Test: TeamMember UserName: " + teammember.getUsername());
+
 //            System.out.println("In saving teammemberAvailability Test: TeamMember roleName: " + teammember.getRole().getRoleName());
             teamMemberAvailability.setTeammember(teammember);
             teamMemberAvailability.setMondayTimeSlot(mondayTimeSlotStr);
@@ -60,9 +129,8 @@ public class TeamMemberAvailabilityRepositoryTest {
 
         //Now check is there or not
         // Retrieve the entity from the database
-        Optional<TeamMemberAvailability> savedAvailabilityOptional = teamMemberAvalibilityRepository.findById(teamMemberAvailability.getId());
-        // get deserailzing string
-        TeamMemberAvailability savedAvailability = savedAvailabilityOptional.get();
+        TeamMemberAvailability savedAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(teammember.getId());
+
         // assertion - check list fetch is similar that we saved
         try {
             List<TimeSlot> savedMondayTimeSlots = savedAvailability.deserializeTimeSlots(savedAvailability.getMondayTimeSlot());
@@ -79,46 +147,43 @@ public class TeamMemberAvailabilityRepositoryTest {
     }
 
 
-    ///// Previously we are passing Monday time availability //////
-    /// so the entry is there ///
-    @Test
-    @Order(2)
-    public void testTeamMemberAvailabiltyAlreadyPresent(){
-        // The teammember is already in User table
-        //get first that- like is authenticated
-        User user = userRepository.findByUsernameAndOrganizationOrgName("nidhishah989","meetsy");
-
-        // now check if the teammember availability entry have been done or not
-        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
-
-        Assertions.assertNotNull(memberAvailability);
-    }
-
     ////////////////// UPDATE MONDAY TIMESLOT BY ADDING NEW - NOT CHECKING CRASHING TIME SLOTS HERE //////
+    // FOR TEAM MEMBER: add new timeslot and check have three timeslots
     @Test
     @Order(3)
     public void testTeamMemberAvailabilityUpdate(){
-        // The teammember is already in User table
-        //get first that- like is authenticated
-        User user = userRepository.findByUsernameAndOrganizationOrgName("nidhishah989","meetsy");
-
-        // now check if the teammember availability entry have been done or not
-        TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
-
-        Assertions.assertNotNull(memberAvailability);
 
         //new Monday availability
         TimeSlot timeSlot = new TimeSlot(LocalTime.of(13,17),LocalTime.of(17,0));
         //deserialize the mondaytimeslots
         try {
+            // The teammember is already in User table
+            //get first that- like is authenticated
+            User user = userRepository.findByUsernameAndOrganizationOrgName("admin","testOrg2");
+            System.out.println(user.getUsername());
+            // now check if the teammember availability entry have been done or not
+            TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
+
+
+
             List<TimeSlot> savedMondayTimeSlots = memberAvailability.deserializeTimeSlots(memberAvailability.getMondayTimeSlot());
             Assertions.assertNotNull(savedMondayTimeSlots);
+            Integer beforeAvailability = savedMondayTimeSlots.size();
             // without checking timeslot crashing .. just updating it
             savedMondayTimeSlots.add(timeSlot);
             //now serialize it back to save
             String mondayTimeSlotStr = memberAvailability.serializeTimeSlots(savedMondayTimeSlots);
             memberAvailability.setMondayTimeSlot(mondayTimeSlotStr);
             teamMemberAvalibilityRepository.save(memberAvailability);
+
+            //check updated one:
+            // now check if the teammember availability entry have been done or not
+            TeamMemberAvailability updatedAvailablity = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());
+            List<TimeSlot> updatedMondayTimeSlots = memberAvailability.deserializeTimeSlots(memberAvailability.getMondayTimeSlot());
+            Integer afterAvailability = updatedMondayTimeSlots.size();
+
+            Assertions.assertEquals(beforeAvailability +1 ,afterAvailability);
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -131,7 +196,7 @@ public class TeamMemberAvailabilityRepositoryTest {
     public void testTeamMemberAvailabilityDelete(){
         // The teammember is already in User table
         //get first that- like is authenticated
-        User user = userRepository.findByUsernameAndOrganizationOrgName("nidhishah989","meetsy");
+        User user = userRepository.findByUsernameAndOrganizationOrgName("team1","testOrg2");
 
         // now check if the teammember availability entry have been done or not
         TeamMemberAvailability memberAvailability = teamMemberAvalibilityRepository.getTeamMemberAvailabilityByTeammember_Id(user.getId());

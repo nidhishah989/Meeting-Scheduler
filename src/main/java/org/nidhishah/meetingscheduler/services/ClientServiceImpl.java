@@ -1,3 +1,8 @@
+/*************
+ * Get list of clients
+ * set new client
+ * set client meeting
+ * *************/
 package org.nidhishah.meetingscheduler.services;
 
 import org.modelmapper.ModelMapper;
@@ -99,6 +104,7 @@ public class ClientServiceImpl implements ClientService {
         }
     }
 
+    /*********** Meeting is set for client *********/
     @Override
     public boolean saveClientMeeting(MeetingDTO meetingDTO) {
         try{

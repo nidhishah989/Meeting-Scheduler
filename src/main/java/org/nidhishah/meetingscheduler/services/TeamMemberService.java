@@ -9,7 +9,7 @@ public interface TeamMemberService {
 
     public void registerAdmin(UserDTO userDTO, OrganizationDTO organizationDTO) throws Exception;
 
-    public List<TeamMemberDTO> getTeamMembersByOrganization(String organization);
+//    public List<TeamMemberDTO> getTeamMembersByOrganization(String organization);
 
     public List<TeamMemberDTO> getTeamMembersByOrgName(String organization);
 

@@ -8,5 +8,4 @@ import java.util.List;
 public interface RoleService {
   public Role findByRoleName(String roleName);
 
-  public List<Role> getUserRoleById(Long id);
 }

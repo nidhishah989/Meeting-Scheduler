@@ -17,14 +17,17 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User,Long> {
 
     public User getUsersById(Long id);
+    //for load logged in user
     public User findByUsernameAndOrganizationOrgName(String username, String orgName);
 
+    // for check new client or teammember already there or not - different usage for true and false
     @Query("select u from User u where u.email=:email and u.organization.id = " +
             "(select o.id from Organization o where o.orgName = :adminOrganization)")
     public User findUserByEmailAndOrganization(@Param("email") String email,@Param("adminOrganization") String adminOrganization);
-//    public List<User> getUsersByOrganizationAndRole(Organization organization, List<Role> roles);
 
-    /// ///// This does not work......
+
+    //used to check the provider is active or not within organization
+    //used in fetching available members for meeting
     @Query(value = "SELECT u.firstName, u.lastName, r.roleName, o.orgName ,u.id, u.isEnabled " +
             "FROM User u " +
             "JOIN Role r ON u.role.id = r.id " +
@@ -33,7 +36,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "AND r.roleName IN ('admin', 'teammember')")
     List<Object[]> findUsersByOrganizationNameAndRole(@Param("organizationName") String organizationName);
 
-    ///// perfect mapping and getting everything in TEammemberDTO...
+    // getting Teammember list in TEammemberDTO...
     @Query(value = "SELECT new org.nidhishah.meetingscheduler.dto.TeamMemberDTO(u.firstName, u.lastName, r.roleName, o.orgName) " +
             "FROM User u " +
             "JOIN Role r ON u.role.id = r.id " +
