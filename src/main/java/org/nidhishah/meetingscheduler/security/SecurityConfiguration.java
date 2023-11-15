@@ -1,3 +1,8 @@
+/********SECURITY CONFIGURATION - CUSTOM UserDetailservice
+ ***                            - Custom Filter
+ *                              -authentication setting
+ *                              - authorization setting
+ * *********/
 package org.nidhishah.meetingscheduler.security;
 
 import org.nidhishah.meetingscheduler.config.OrganizationFilter;
@@ -11,7 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
@@ -43,8 +47,9 @@ public class SecurityConfiguration {
                         (auth) -> auth
                         .requestMatchers("/", "/orgsetup","/orgsetupprocess","/login","/signup","/css/**","/js/**","assests/**").permitAll() //this will allow any user to access these two pages
                                 .requestMatchers("/setorgdetail/**","/process-orgdetailsetup","/adm_dashboard","/addteammember","/addclient").hasAuthority("admin")
-                                .requestMatchers("/availability_setup").hasAnyAuthority("admin","teammember")
-                                .requestMatchers("/meeting_schedule","/setup-meeting","/setup-meeting/**").hasAnyAuthority("client")
+                                .requestMatchers("/availability_setup","/saveavailability").hasAnyAuthority("admin","teammember")
+                                .requestMatchers("/team-dashboard").hasAnyAuthority("teammember")
+                                .requestMatchers("/meeting_schedule","/setup-meeting","/setup-meeting/**","/client-dashboard","/meetingschedule/**","/schedule-meeting/**").hasAnyAuthority("client")
                         .anyRequest().authenticated() //this will make sure to authenticate user for other pages
 
                 )

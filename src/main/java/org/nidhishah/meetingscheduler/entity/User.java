@@ -13,7 +13,6 @@ public class User {
     private String password;
 
     @ManyToOne(targetEntity = Role.class, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "role_name")
     private Role role;
 
     @Column(name = "temp_passcode")

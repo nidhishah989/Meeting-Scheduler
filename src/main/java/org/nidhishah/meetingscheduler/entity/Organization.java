@@ -19,12 +19,6 @@ public class Organization {
     @Column(name = "base_url")
     private String baseUrl;
 
-//    @Column(name = "meeting_type")
-//    private String meetingType;
-//
-//    @Column(name = "meeting_window")
-//    private String meetingWindow;
-
     @Column(name="address_1")
     private String orgAddress1;
 

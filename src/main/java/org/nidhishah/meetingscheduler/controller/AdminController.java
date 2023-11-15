@@ -1,15 +1,12 @@
+/*************ADMIN DASHBOARD _ BY NIDHI SHAH ************/
 package org.nidhishah.meetingscheduler.controller;
 
 import org.nidhishah.meetingscheduler.dto.ClientDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.dto.OrganizationDTO;
-
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
-import org.nidhishah.meetingscheduler.entity.User;
-import org.nidhishah.meetingscheduler.repository.UserRepository;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.ClientServiceImpl;
-import org.nidhishah.meetingscheduler.services.OrganizationService;
 import org.nidhishah.meetingscheduler.services.OrganizationServiceImpl;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
 import org.slf4j.Logger;
@@ -44,6 +41,7 @@ public class AdminController {
         this.clientService = clientService;
     }
 
+    ////////////////////////ADMIN DASHBOARD ///////////////
     @GetMapping("/adm_dashboard")
     public String GetAdminDashboard(Model model, @ModelAttribute(name="teamAddError")String teamAddError,
                                     @ModelAttribute(name="teamAddSuccess")String teamAddSuccess,
@@ -57,13 +55,8 @@ public class AdminController {
 
                 logger.info("Authenticated User: "+ userPrincipal.getUsername() + "from " + adminOrganization + "organization");
 
-                System.out.println("authenticated adminORganization: " + adminOrganization);
                 // find the organization
                 OrganizationDTO organizationDTO = organizationService.findByOrgName(adminOrganization);
-                System.out.println("Find ORganization details: " + organizationDTO.getOrgDescription());
-                System.out.println(organizationDTO.getOrgName() + "-> Address->" + organizationDTO.getOrgAddress1() +
-                        organizationDTO.getOrgAddress2() + organizationDTO.getOrgCity() + organizationDTO.getOrgState()
-                        + organizationDTO.getOrgState() + "--->Contact: " + organizationDTO.getOrgContact());
 
                 if (organizationDTO != null) {
                     logger.debug("Organization from authenticated user presents in organization table. Good to Go.");
@@ -71,7 +64,7 @@ public class AdminController {
                     List<TeamMemberDTO> teamMemberDTOList = teamMemberService.getTeamMembersByOrgName(adminOrganization);
 
                     for (TeamMemberDTO member:teamMemberDTOList){
-                        System.out.println("In Controller:::: "+member);
+                        logger.debug("TEAM MEMBER::::: "+member);
                     }
                     // get list of clients
                     List<ClientDTO> clientDTOList = clientService.getClientListByOrgName(adminOrganization);
@@ -85,13 +78,13 @@ public class AdminController {
 
 
                     if(!teamAddError.isEmpty()){
-                        System.out.println("teamaddError:  "+teamAddError + " "+ teamAddError.isEmpty());
+                        logger.error("teamaddError:  "+teamAddError);
                         model.addAttribute("teamadderror",teamAddError);
                     } else if (!teamAddSuccess.isEmpty()) {
                         model.addAttribute("teamaddsuccess",teamAddSuccess);
                     }
                     else if(!clientAddError.isEmpty()){
-                        System.out.println("clientaddError:  "+teamAddError + " "+ clientAddError.isEmpty());
+                        logger.error("clientaddError:  "+clientAddError);
                         model.addAttribute("clientadderror",clientAddError);
                     } else if (!clientAddSuccess.isEmpty()) {
                         model.addAttribute("clientaddsuccess",clientAddSuccess);
@@ -104,9 +97,9 @@ public class AdminController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "file";
+            return "error_404";
         }
-        return "file";
+        return "error_404";
     }
 
 }

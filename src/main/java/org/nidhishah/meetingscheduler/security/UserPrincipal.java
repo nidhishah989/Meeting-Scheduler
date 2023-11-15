@@ -1,3 +1,4 @@
+/************CUSTOME USER DETAIL********************/
 package org.nidhishah.meetingscheduler.security;
 
 import org.nidhishah.meetingscheduler.entity.Role;

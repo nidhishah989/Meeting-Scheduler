@@ -1,15 +1,19 @@
+/**********Team Member - create,
+ *         Team member Availability - set, get, update, delete
+ * ******************/
 package org.nidhishah.meetingscheduler.controller;
 
-import jakarta.validation.constraints.Null;
+import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
 import org.nidhishah.meetingscheduler.dto.DaysAvailabilityDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
 import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
-import org.nidhishah.meetingscheduler.dto.TimeSlot;
 import org.nidhishah.meetingscheduler.entity.TeamMemberExtraInfo;
 import org.nidhishah.meetingscheduler.repository.TeamMemberExtraInfoRepository;
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.TeamMemberServiceImpl;
 import org.nidhishah.meetingscheduler.services.UserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,13 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 public class TeamMemberController {
-
+    private static final Logger logger = LoggerFactory.getLogger(TeamMemberController.class.getName());
     private UserServiceImpl userService;
     private TeamMemberServiceImpl teamMemberService;
 
@@ -40,15 +40,12 @@ public class TeamMemberController {
         this.teamMemberExtraInfoRepository = teamMemberExtraInfoRepository;
     }
 
+    /////////////////////////ADD TEAM MEMBER BY ADMIN
     @PostMapping("/addteammember")
     public String addTeamMember(Model model, @ModelAttribute("newmember") NewOrgMemberDTO newOrgMemberDTO,
                                 @RequestParam String roleName, RedirectAttributes redirectAttributes) {
         try {
-            System.out.println("Inside the add team member");
-            System.out.println(newOrgMemberDTO.getEmail());
-            System.out.println(newOrgMemberDTO.getFirstName());
-            System.out.println(newOrgMemberDTO.getLastName());
-            System.out.println(roleName); // roleName will be "teammember" here
+            logger.info("Inside the add team member");
             // get authenticated admin organization
             //check the teammember is already with organization or not. either as client, teammember or as admin
             // if is there, send error, this teammember is already exist with your organization
@@ -59,6 +56,7 @@ public class TeamMemberController {
                 //organization information collection
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
                 String adminOrganization = userPrincipal.getOrganizationName();
+                //Find that the new member is present in that organization or not
                 //new member found
                 if(userService.findUserByEmailAndOrganization(newOrgMemberDTO.getEmail(), adminOrganization)){
                     redirectAttributes.addFlashAttribute("teamAddError",newOrgMemberDTO.getEmail() + " is already member of "+ adminOrganization);
@@ -69,23 +67,22 @@ public class TeamMemberController {
                     teamMemberService.registerNewTeamMember(newOrgMemberDTO,adminOrganization);
                     redirectAttributes.addFlashAttribute("teamAddSuccess","New member added successfully and email sent.");
                     return "redirect:/adm_dashboard";
-
                 }
-                //Find that the new member is present in that organization or not
-
             }
 
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        return "file";
+        return "error_404";
     }
 
+    //////// TEAM MEMBER AVAILABILITY SETUP - BY TEAM MEMBER OR ADMIN
     @GetMapping("/availability_setup")
     public String getAvailabilitySetupForm(Model model){
 
         try{
+            logger.info("AVAILABILITY SETUP PAGE REQUESTED.");
             //get authenticated person info
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
@@ -103,7 +100,7 @@ public class TeamMemberController {
                 teamMemberDTO.setOrgName(userPrincipal.getOrganizationName());
                 // if teammember have the availability get them or get default one
                 DaysAvailabilityDTO availabilityDTO = teamMemberService.getTeamMemberAvailability(userPrincipal.getUsername(),userPrincipal.getOrganizationName());
-//                System.out.println("Sunday end time: "+ availabilityDTO.getSundayTimeSlot().get(0).getEndTime());
+
                 //teammemberdto for getting meeting time, meeting type. zoomlink thing
                 model.addAttribute("teammeber",teamMemberDTO);
                 model.addAttribute("daysavail",availabilityDTO);
@@ -112,24 +109,19 @@ public class TeamMemberController {
             else{throw new Exception();}
         }catch (Exception e){
             e.printStackTrace();
+            logger.error("USER IS AUTHENTICATE OR NOT ADMIN OR TEAMMEMBER..");
             return "login";
         }
     }
 
+    //////// SET, UPDATE, DELETE Availability
     @PostMapping("/saveavailability")
     public String setTeamMemberAvailability(@ModelAttribute(name="teammeber") TeamMemberDTO teamMemberDTO,
                                           @ModelAttribute(name="daysavail") DaysAvailabilityDTO availabilityDTO) {
         try {
             //////////////////////////////////////////////////////////////////////////////////
-            System.out.println("::::Set Availability for Team MEmber::::::");
-            System.out.println("ORg name:: " + teamMemberDTO.getOrgName());
-            System.out.println("meeting Window::" + teamMemberDTO.getMeetingWindow());
-            System.out.println("timezone :: " + teamMemberDTO.getTimeZone());
-            System.out.println("zoommeetingLink ::" + teamMemberDTO.getZoomMeetingLink());
-            System.out.println("zoom meeting setup? ::" + teamMemberDTO.isZoomMeetingAvailable());
-            System.out.println("onsitemeeting setup? :: " + teamMemberDTO.isOnSiteMeetingAvailable());
-            System.out.println("::::Availability for Team MEmber::::::");
-//
+            logger.info("::::Set Availability for Team MEmber::::::");
+
             //get authenticated user
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
@@ -139,7 +131,7 @@ public class TeamMemberController {
                 Long userid = userPrincipal.getUserId();
                 //Now save updated or new availability
                 Boolean successSetup = teamMemberService.setTeamMemberAvailability(userid, teamMemberDTO, availabilityDTO);
-                System.out.println("CONTROLLER RECEIVE SUCESSSETUP: "+ successSetup);
+                logger.debug("CONTROLLER RECEIVE SUCESSSETUP: "+ successSetup);
                 if (successSetup) {
                     String role = userPrincipal.getAuthorities().isEmpty() ? "" : userPrincipal.getAuthorities().iterator().next().getAuthority();
                     if (role.equals("admin")) {
@@ -154,7 +146,7 @@ public class TeamMemberController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("UNSUCESSFUL SETUP");
+             logger.debug("UNSUCESSFUL SETUP");
             //return the availability form again with message
         }
         return "redirect:/availability_setup";

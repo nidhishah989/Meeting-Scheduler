@@ -125,7 +125,7 @@ public class LoginController {
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 //                logger.debug("The logged in user role is: "+ userPrincipal.getAuthorities().toString());
                 String role = userPrincipal.getAuthorities().isEmpty() ? "" : userPrincipal.getAuthorities().iterator().next().getAuthority();
-                System.out.println("Looged in user role is: " + role);
+                logger.info("Logged In user role: "+ role);
                 //if admin - open admin dashboard
                 if (role.equals("admin")) {
                     return "redirect:/adm_dashboard";

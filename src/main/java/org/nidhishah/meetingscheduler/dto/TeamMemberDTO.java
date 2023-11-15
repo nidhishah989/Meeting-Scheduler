@@ -8,13 +8,10 @@ import lombok.Setter;
 @Setter
 
 public class TeamMemberDTO {
-//    private Long id;
-//    private String username;
+
     private Long id;
     private String firstName;
     private String lastName;
-//    private String email;
-//    private String password;
     private String roleName; // To store the role name from the associated Role entity
     private String orgName; // To store the organization name from the associated Organization entity
     private String meetingWindow;

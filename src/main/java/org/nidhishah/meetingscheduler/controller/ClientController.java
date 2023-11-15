@@ -1,3 +1,4 @@
+/*********Client- add, Client - meeting schedule form, process, client dashboard *******************/
 package org.nidhishah.meetingscheduler.controller;
 
 import org.nidhishah.meetingscheduler.dto.*;
@@ -34,15 +35,13 @@ public class ClientController {
         this.teamMemberService = teamMemberService;
     }
 
+    /////////////////////////// Add new client by Admin
     @PostMapping("/addclient")
     public String addNewClient(Model model, @ModelAttribute("newmember") NewOrgMemberDTO newOrgMemberDTO,
                                 @RequestParam String roleName, RedirectAttributes redirectAttributes) {
         try {
-            System.out.println("Inside the add client");
-            System.out.println(newOrgMemberDTO.getEmail());
-            System.out.println(newOrgMemberDTO.getFirstName());
-            System.out.println(newOrgMemberDTO.getLastName());
-            System.out.println(roleName); // roleName will be "client" here
+            logger.info("Inside the add client");
+
             // get authenticated admin organization
             //check the client is already with organization or not. either as client, teammember or as admin
             // if is there, send error, this client is already exist with your organization
@@ -53,6 +52,7 @@ public class ClientController {
                 //organization information collection
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
                 String adminOrganization = userPrincipal.getOrganizationName();
+                //Find that the new member is present in that organization or not
                 //new member found
                 if(userService.findUserByEmailAndOrganization(newOrgMemberDTO.getEmail(), adminOrganization)){
                     redirectAttributes.addFlashAttribute("clientAddError",newOrgMemberDTO.getEmail() + " is already member of "+ adminOrganization);
@@ -63,10 +63,7 @@ public class ClientController {
                     clientService.registerNewClient(newOrgMemberDTO,adminOrganization);
                     redirectAttributes.addFlashAttribute("clientAddSuccess","New client added successfully and email sent.");
                     return "redirect:/adm_dashboard";
-
                 }
-                //Find that the new member is present in that organization or not
-
             }
 
         }catch (OrganizationNotFoundException e){
@@ -74,7 +71,7 @@ public class ClientController {
             e.printStackTrace();
         }
 
-        return "file";
+        return "error_404";
     }
 
     /**
@@ -90,10 +87,10 @@ public class ClientController {
                 //organization information collection
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
                 String organizationName = userPrincipal.getOrganizationName();
-                System.out.println("Client page get form1 controller");
+                logger.info("Client page get form1 controller");
                 //call teammember service to get all teammembers list who are available for meetings
                 List<TeamMemberDTO> availableTeamMembers= teamMemberService.getAvailableTeamMembersForMeetingSchedule(organizationName);
-                System.out.println("Received "+availableTeamMembers.size() +" available from back for " + organizationName);
+                logger.info("Received "+availableTeamMembers.size() +" available from back for " + organizationName);
                 model.addAttribute("teamembers",availableTeamMembers);
                 model.addAttribute("organization",organizationName);
                 return "client_page";
@@ -108,10 +105,11 @@ public class ClientController {
         }
     }
 
+    // second form redirect
     @PostMapping("/setup-meeting")
     public String getMeetingScheduleForm2(@ModelAttribute(name="selectedTeamMember")String id){
         //get id of the teammember and redirect to second form
-        System.out.println("In the process of getting second schedule form, teammember id: "+ id);
+        logger.debug("In the process of getting second schedule form, teammember id: "+ id);
         return "redirect:/schedule-meeting/"+id;
     }
 
@@ -120,12 +118,12 @@ public class ClientController {
     public String showSecondMeetingForm(@PathVariable(name="id")String id,Model model){
         try {
             DaysAvailabilityDTO availabilityDTO = new DaysAvailabilityDTO();
-            System.out.println("IN THE SECOND FORM GET MAPPING: TEAMMEMBER:ID" + id);
+            logger.debug("IN THE SECOND FORM GET MAPPING: TEAMMEMBER:ID" + id);
             //get teammember info: firstname, last name, meeting type options, meeting window, timezone
             TeamMemberDTO teamMemberDTO = teamMemberService.getTeamMemberInfoById(id);
             //if user info found, and user is teammember or admin and user is enable
             if (teamMemberDTO != null) {
-                System.out.println("IN THE SECOND FORM GET MAPPING: TEAMMEMBER FOUND");
+                logger.debug("IN THE SECOND FORM GET MAPPING: TEAMMEMBER FOUND");
                 // have to check user organziation match with client org
                 //get authenticated person info
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -135,7 +133,7 @@ public class ClientController {
                     String organizationName = userPrincipal.getOrganizationName();
                     //check org matching - good to go, get availability
                     if (teamMemberDTO.getOrgName().equals(organizationName)) {
-                        System.out.println("IN THE SECOND FORM GET MAPPING:TEAMMEMBER AND CLIENT ORGANIZATION MATCH");
+                        logger.debug("IN THE SECOND FORM GET MAPPING:TEAMMEMBER AND CLIENT ORGANIZATION MATCH");
                         //get days availability based on meeting window and team member id
                         availabilityDTO = teamMemberService.getTeamMemberMeetingAvail(teamMemberDTO.getMeetingWindow(),id);
                         if(availabilityDTO == null){
@@ -149,18 +147,19 @@ public class ClientController {
             else{
                 throw new Exception();
             }
-            System.out.println("IN THE SECOND FORM GET MAPPING: DATA HAS RECEIVED FROM BACK");
+            logger.debug("IN THE SECOND FORM GET MAPPING: DATA HAS RECEIVED FROM BACK");
             //add everything in model and return the page
             model.addAttribute("teammember",teamMemberDTO);
             model.addAttribute("daysavail",availabilityDTO);
             return "meeting_schedule_page";
         }catch (Exception e){
             e.printStackTrace();
-            return "Error/404";
+            return "error_404";
         }
 
     }
 
+    ///set meeting
     @PostMapping("/meetingschedule/{id}")
     public String setClientMeeting(@ModelAttribute(name="selectedDate") String meetingdate,
                                  @ModelAttribute(name="selectedMeetingType")String meetingType,
@@ -191,14 +190,8 @@ public class ClientController {
                 meetingDTO.setClientID(clientId);
                 meetingDTO.setOrganization(organization);
                 /////////////////////////////////////////////////////
-                System.out.println("SCHEDULE MEETING FOR A CLIENT WITH TEAMMEMBER: ");
-                System.out.println("Team Member id: " + teammemberId);
-                System.out.println("Meeting Date: " + meetingdate);
-                System.out.println("Meeting Day: " + meetingDay);
-                System.out.println("Meeting Type: " + meetingType);
-                System.out.println("Meeting Timeslot: " + meetingslot);
-                System.out.println("FIrst name: "+ teamMemberDTO.getFirstName());
-                System.out.println("Last name:" + teamMemberDTO.getLastName());
+                logger.debug("SCHEDULE MEETING FOR A CLIENT WITH TEAMMEMBER: ");
+
                 ////////////////////////////////////////////////////////////////////
                 // save the meeting and change the teammember availability
                 //if success- change teammember availability
@@ -219,6 +212,7 @@ public class ClientController {
         return "redirect:/client-dashboard";
     }
 
+    ////CLIENT DASHBOARD
     @GetMapping("/client-dashboard")
     public String getClientDashboard(@ModelAttribute(name="success") String success,
                                      @ModelAttribute(name="error")String error, Model model){

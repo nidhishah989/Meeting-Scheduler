@@ -1,11 +1,9 @@
+/**************ORGANIZATION CREATE, UPDATE FROMS AND PROCESSES -NIDHI SHAH******************/
 package org.nidhishah.meetingscheduler.controller;
 
-import com.mysql.cj.exceptions.ClosedOnExpiredPasswordException;
 import jakarta.validation.Valid;
 import org.nidhishah.meetingscheduler.dto.OrganizationDTO;
-import org.nidhishah.meetingscheduler.dto.TeamMemberDTO;
 import org.nidhishah.meetingscheduler.dto.UserDTO;
-
 import org.nidhishah.meetingscheduler.security.UserPrincipal;
 import org.nidhishah.meetingscheduler.services.OrganizationService;
 import org.nidhishah.meetingscheduler.services.TeamMemberService;
@@ -37,6 +35,7 @@ public class OrganizationController {
         this.organizationService = organizationService;
     }
 
+    ////////////////// ORGANIZATION SETUP PAGE
     @GetMapping("/orgsetup")
     public String showOrgSetupForm(Model model){
         model.addAttribute("teammember",new UserDTO());
@@ -46,6 +45,7 @@ public class OrganizationController {
 
     }
 
+    ////////// ORGANIZATION SETUP PROCESS -IF ORGANIZATION IS ALREADY THERE _ GIVE ERROR
     @PostMapping("/orgsetupprocess")
     public String processOrgSetup(@Valid @ModelAttribute ("teammember") UserDTO userDTO,
                                   BindingResult bindingResult,
@@ -55,7 +55,6 @@ public class OrganizationController {
         // Validate UserDTO
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(error -> {
-                System.out.println(error.getDefaultMessage());
                 logger.error(error.getDefaultMessage());
             });
             // Handle validation errors for UserDTO
@@ -67,26 +66,25 @@ public class OrganizationController {
         }catch( Exception e){
 
             String errormessage = "Organization setup failed. The provided organization name is already in use.";
-            System.out.println(errormessage);
              model.addAttribute("errorMessage",errormessage);
              return "orgadmin_setup_page";
         }
 
     }
 
+    ////////////////////////////////////// SET ORGANIZATION DETAIL FORM
     @GetMapping("/setorgdetail/{organizationName}")
     public String updateOrgWithExtraDetails(@PathVariable(name="organizationName") String organizationName,
                                             Model model)
     {
-        System.out.println("Inside the setorgdetail controller");
+        logger.info("Inside the setorgdetail controller");
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
                 if (userPrincipal.getOrganizationName().equals(organizationName)) {
                     // Access the organization name from the UserPrincipal
-                    System.out.println("Authenticated User organization" + userPrincipal.getOrganizationName());
-                    System.out.println(userPrincipal.getAuthorities());
+                    logger.info("Get form for organization Extra Information setup for given url - organization.");
                     //get organization: if is null //404 error
                     OrganizationDTO organizationDTO = organizationService.findByOrgName(organizationName);
                     if (organizationDTO != null) {
@@ -99,12 +97,13 @@ public class OrganizationController {
             }
         }
         catch (Exception e){
-            System.out.println("Error: 404");
-            return "Error/404";
+            logger.error("ERROR: 404");
+            return "error_404";
         }
-        return "Error/404";
+        return "error_404";
     }
 
+    ////////////////////////////////////// PROCESS ORGANIZATION DETAIL FORM
     @PostMapping("/process-orgdetailsetup")
     public String processOrgDetailAddition(@ModelAttribute(name="organization") OrganizationDTO organizationDTO,
                                            Model model)
@@ -114,10 +113,8 @@ public class OrganizationController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication != null && authentication.isAuthenticated()) {
-                System.out.println(authentication.getPrincipal());
-                System.out.println(authentication.getDetails());
+               logger.info("process organization Extra Information setup form for organization"+ organizationDTO.getOrgName());
 
-                System.out.println("In Controller: "+organizationDTO.getOrgName());
                 if(organizationService.setOrganizationDetail(organizationDTO)){
                     // update is done - give admin a new page for setting availability
                     return "redirect:/availability_setup";
@@ -131,9 +128,9 @@ public class OrganizationController {
             }
 
         }catch (Exception e){
-            System.out.println("Error: 404");
-            return "Error/404";
+            logger.error("ERROR: 404");
+            return "error_404";
         }
-        return "Error/404";
+        return "error_404";
     }
 }

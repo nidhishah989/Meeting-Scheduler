@@ -6,6 +6,7 @@
 package org.nidhishah.meetingscheduler.services;
 
 import org.modelmapper.ModelMapper;
+import org.nidhishah.meetingscheduler.controller.ClientController;
 import org.nidhishah.meetingscheduler.dto.ClientDTO;
 import org.nidhishah.meetingscheduler.dto.MeetingDTO;
 import org.nidhishah.meetingscheduler.dto.NewOrgMemberDTO;
@@ -18,6 +19,8 @@ import org.nidhishah.meetingscheduler.repository.MeetingRepository;
 import org.nidhishah.meetingscheduler.repository.OrganizationRepository;
 import org.nidhishah.meetingscheduler.repository.UserRepository;
 import org.nidhishah.meetingscheduler.util.CodeGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
