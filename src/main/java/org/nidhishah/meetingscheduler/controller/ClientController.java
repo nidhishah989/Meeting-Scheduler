@@ -196,7 +196,7 @@ public class ClientController {
                 // save the meeting and change the teammember availability
                 //if success- change teammember availability
                 if (clientService.saveClientMeeting(meetingDTO)) {
-                    redirectAttributes.addFlashAttribute("success","Your Meeting has been scheduled with ");
+                    redirectAttributes.addFlashAttribute("success","Congratulation! Your Meeting has been scheduled. Please check your email for meeting details.");
                     return "redirect:/client-dashboard";
                 } else {
                     throw new Exception();
