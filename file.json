@@ -1,3 +1,5 @@
-Title: Meeting Scheduler (Meetsy)
-Description: App
-Tools: Java
+{
+  "title": "Meeting Scheduler (Meetsy)",
+  "description": "App",
+  "tools": ["Java"]
+}
