@@ -1,6 +1,6 @@
 {
   "title": "Meeting Scheduler(Meetsy)",
-  "description": "Meetsy is an efficient and user-friendly meeting scheduling application designed to streamline communication between organizations and their clients. Tailored for seamless coordination, Meetsy empowers organizational teams to effortlessly manage their availability, ensuring a secure and confidential environment for scheduling meetings with clients.",
+  "description": "Simplify meeting scheduling app for organizations and clients. Effortlessly coordinate meetings, manage availability, and ensure secure communication—all in one user-friendly application.",
   "tools": [
     {
       "tool": "JAVA",
