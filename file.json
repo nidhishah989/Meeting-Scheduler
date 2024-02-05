@@ -1,5 +1,6 @@
 {
   "title": "Meeting Scheduler(Meetsy)",
+  "prjimg" : "https://github.com/nidhishah989/Meeting-Scheduler/blob/master/app_img.png",
   "description": "Simplify meeting scheduling app for organizations and clients. Effortlessly coordinate meetings, manage availability, and ensure secure communication—all in one user-friendly application.",
   "tools": [
     {
